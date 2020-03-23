@@ -6,6 +6,7 @@ GEM
     faraday (1.0.0)
       multipart-post (>= 1.2, < 3)
     multipart-post (2.1.1)
+    recursive-open-struct (1.1.1)
     rspec (3.9.0)
       rspec-core (~> 3.9.0)
       rspec-expectations (~> 3.9.0)
@@ -25,7 +26,8 @@ PLATFORMS
 
 DEPENDENCIES
   byebug
-  faraday
+  faraday (~> 1.0.0)
+  recursive-open-struct (~> 1.1.1)
   rspec (<= 4)
 
 BUNDLED WITH
