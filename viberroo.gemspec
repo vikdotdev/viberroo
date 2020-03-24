@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name = 'viberroo'
   s.homepage = 'https://github.com/vikdotdev/viberroo'
-  s.version = '0.0.4'
+  s.version = '0.0.5'
   s.date = '2020-03-19'
   s.summary = 'Thin Viber REST API wrapper for ruby.'
   s.authors = ['Viktor Habchak']
