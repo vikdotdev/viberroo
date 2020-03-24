@@ -25,7 +25,7 @@ module Viberroo
     def dispatch(params)
       Faraday.post(
         @message_url,
-        normalize({ receiver: @user.id }.merge(params)),
+        normalize({ receiver: @response.sender.id }.merge(params)),
         @header
       )
     end
