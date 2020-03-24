@@ -1,11 +1,14 @@
+require_relative 'lib/viberroo'
+
 Gem::Specification.new do |s|
   s.name = 'viberroo'
   s.homepage = 'https://github.com/vikdotdev/viberroo'
-  s.version = '0.0.5'
+  s.version = Viberroo::VERSION
   s.date = '2020-03-19'
-  s.summary = 'Thin Viber REST API wrapper for ruby.'
+  s.summary = 'Thin Viber REST API wrapper for Ruby.'
   s.authors = ['Viktor Habchak']
   s.email = 'vikdotdev@gmail.com'
+  s.license = 'MIT'
   s.files = %w[
     lib/viberroo.rb
     lib/message.rb
@@ -13,7 +16,6 @@ Gem::Specification.new do |s|
     lib/response.rb
     lib/bot.rb
   ]
-  s.license = 'MIT'
 
   s.add_dependency 'faraday', '~> 1.0.0'
   s.add_dependency 'recursive-open-struct', '~> 1.1.1'
