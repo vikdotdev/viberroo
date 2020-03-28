@@ -1,5 +1,7 @@
 module Viberroo
   module Message
+    # TODO: add list of keys that is mandatory at any time, throw exceptions
+    # and log errors if not found
     def send_message(params = {})
       dispatch({
         type: :text
@@ -31,7 +33,7 @@ module Viberroo
     end
 
     def normalize(params)
-      params.delete_if { |_, v| v.nil? }.to_json
+      params.delete_if { |_, v| v.nil? }
     end
 
     def user_id

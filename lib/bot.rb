@@ -10,7 +10,7 @@ module Viberroo
     end
 
     def set_webhook(params)
-      Faraday.post(@webhook_url, params.to_json, @header)
+      Faraday.post(@webhook_url, params, @header)
     end
   end
 end
