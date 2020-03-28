@@ -16,16 +16,34 @@ RSpec.shared_context 'params' do
     { url: 'http://my.host.com', event_types: %w[conversation_started] }
   end
   let(:message_params) do
-    { text: 'my_message' }.merge(generic_params)
+    { text: 'my_message' }.merge(message_event_params)
   end
   let(:rich_media_params) do
-    generic_params
+    message_event_params
   end
   let(:location_params) do
-    { 'location': { lat: '37.50', lon: '-122.20' }}.merge(generic_params)
+    { 'location': { lat: '37.50', lon: '-122.20' } }.merge(message_event_params)
   end
-  let(:generic_params) do
-    { event: 'message', sender: { id: '01234567890A=' } }
+  let(:message_event_params) do
+    { event: 'message', sender: { id: 'message01234' } }
+  end
+  let(:conversation_started_event_params) do
+    { event: 'conversation_started', user: { id: 'conversation01234' } }
+  end
+  let(:delivered_event_params) do
+    { event: 'delivered', user_id: 'delivered01234' }
+  end
+  let(:unsubscribed_event_params) do
+    { event: 'unsubscribed', user_id: 'unsubscribed01234' }
+  end
+  let(:subscribed_event_params) do
+    { event: 'subscribed', user: { id: 'subscribed01234' } }
+  end
+  let(:seen_event_params) do
+    { event: 'seen', user_id: 'seen01234' }
+  end
+  let(:failed_event_params) do
+    { event: 'failed', user_id: 'failed01234' }
   end
 end
 

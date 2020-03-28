@@ -27,22 +27,13 @@ module Viberroo
     def dispatch(params)
       Faraday.post(
         @message_url,
-        normalize({ receiver: user_id }.merge(params)),
+        normalize({ receiver: @response.user_id }.merge(params)),
         @header
       )
     end
 
     def normalize(params)
       params.delete_if { |_, v| v.nil? }
-    end
-
-    def user_id
-      case @response.event
-      when 'message'
-        @response.sender.id
-      when 'conversation_started'
-        @response.user.id
-      end
     end
   end
 end
