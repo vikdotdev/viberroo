@@ -13,6 +13,6 @@ RSpec.describe Viberroo::Bot do
   end
 
   describe '#remove_webhook' do
-    it 'makes a request with correct url, body and header'
+    it 'requests API with correct params'
   end
 end
