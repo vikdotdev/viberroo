@@ -5,7 +5,8 @@ module Viberroo
     class << self
       def init(params)
         @@os = RecursiveOpenStruct.new params.to_h
-        @@os.user_id = user_id and return @@os
+        @@os.user_id = user_id
+        @@os
       end
 
       private

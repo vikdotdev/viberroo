@@ -15,6 +15,12 @@ module Viberroo
         }.merge(params)
       end
 
+      def self.share_phone(params = {})
+        { ActionType: 'share-phone',
+          min_api_version: 3
+        }.merge(params)
+      end
+
       def self.none(params = {})
         { ActionType: 'none' }.merge(params)
       end

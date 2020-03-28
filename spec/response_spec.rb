@@ -2,6 +2,11 @@ require 'spec_helper'
 
 RSpec.describe Viberroo::Response do
   describe 'init' do
+    it 'returns response on set_webhook event' do
+      response = subject.class.init(set_webhook_event_params)
+      expect(response.user_id).to eq(nil)
+      expect(response).not_to eq(nil)
+    end
     it 'sets correct user_id on conversation_started event' do
       response = subject.class.init(conversation_started_event_params)
       user_id = conversation_started_event_params[:user][:id]

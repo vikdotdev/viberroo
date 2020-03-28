@@ -27,6 +27,12 @@ RSpec.describe Viberroo::Input do
     end
   end
 
+  describe 'Button.share_phone' do
+    it 'has correct ActionType' do
+      expect(subject::Button.share_phone).to include({ ActionType: 'share-phone' })
+    end
+  end
+
   describe 'Input::keyboard' do
     include Viberroo::Input
 
