@@ -1,11 +1,11 @@
 require 'json'
 require 'faraday'
-require 'message'
-require 'bot'
-require 'input'
-require 'response'
-require 'bot'
+require 'viberroo/message'
+require 'viberroo/bot'
+require 'viberroo/input'
+require 'viberroo/response'
+require 'viberroo/bot'
 
 module Viberroo
-  API_URL = 'https://chatapi.viber.com/pa'
+  API_URL = 'https://chatapi.viber.com/pa'.freeze
 end

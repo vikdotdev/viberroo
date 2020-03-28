@@ -1,4 +1,4 @@
-require_relative 'lib/version'
+require_relative 'lib/viberroo/version'
 
 Gem::Specification.new do |s|
   s.name = 'viberroo'
@@ -10,12 +10,12 @@ Gem::Specification.new do |s|
   s.email = 'vikdotdev@gmail.com'
   s.license = 'MIT'
   s.files = %w[
-    lib/version.rb
     lib/viberroo.rb
-    lib/message.rb
-    lib/input.rb
-    lib/response.rb
-    lib/bot.rb
+    lib/viberroo/version.rb
+    lib/viberroo/message.rb
+    lib/viberroo/input.rb
+    lib/viberroo/response.rb
+    lib/viberroo/bot.rb
   ]
   s.require_paths = ['lib']
   s.add_dependency 'faraday', '~> 1.0.0'
