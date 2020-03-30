@@ -13,6 +13,11 @@ RSpec.describe Viberroo::Bot do
   end
 
   describe '#remove_webhook' do
-    it 'requests API with correct params'
+    it 'requests API with correct params' do
+      stub = stub_request(:post, webhook_url).with(body: remove_webhook_params, headers: headers)
+
+      bot.remove_webhook
+      expect(stub).to have_been_made.once
+    end
   end
 end

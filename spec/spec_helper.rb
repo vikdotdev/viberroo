@@ -15,6 +15,9 @@ RSpec.shared_context 'params' do
   let(:set_webhook_params) do
     { url: 'http://my.host.com', event_types: %w[conversation_started] }
   end
+  let(:remove_webhook_params) do
+    { url: '' }
+  end
   let(:message_params) do
     { text: 'message' }.merge(message_event_params)
   end

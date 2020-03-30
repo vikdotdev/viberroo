@@ -5,7 +5,7 @@ This library is a thin wrapper for Viber REST API, written in Ruby. It uses most
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'viberroo', '~> 0.0.7'
+gem 'viberroo', '~> 0.0.8'
 ```
 
 And then execute:
@@ -19,14 +19,14 @@ Or install it yourself as:
 ```
 
 ## Usage
-First of all get aquainted with 'Getting Started' section on [Viber REST API page](https://developers.viber.com/docs/api/rest-bot-api/#get-started). There you'll find a link to create a bot. Read about webhooks in the relevant section and come back here to setup one for yourself.
+First of all get acquainted with 'Getting Started' section on [Viber REST API page](https://developers.viber.com/docs/api/rest-bot-api/#get-started). There you'll find a link to create a bot. Read about webhooks in the relevant section and come back here to setup one for yourself.
 
 ### Webhooks
 During webhook setup you need to specify an URL signed by known CA. This might sound rather inconvenient, unless you use ngrok - fitting tool for such circumstance. Here's a [guide](https://developers.viber.com/blog/2017/05/24/test-your-bots-locally) on how to get started.
 
 Rake task is good way of managing webhooks:
 ```bash
-  $ rails g task viber set_webhook
+  $ rails g task viber set_webhook remove_webhook
 ```
 ``` ruby
   # lib/tasks/viber.rake
@@ -42,6 +42,12 @@ Rake task is good way of managing webhooks:
       }
 
       puts bot.set_webhook(params).body
+    end
+
+    task remove_webhook: :environment do
+      bot = Viberroo::Bot.new(token: 'YOUR_VIBER_API_TOKEN')
+
+      puts bot.remove_webhook(params).body
     end
   end
 ```
