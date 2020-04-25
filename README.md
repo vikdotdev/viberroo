@@ -1,5 +1,5 @@
 # Viberroo
-This library is a thin wrapper for Viber REST API, written in Ruby. It uses mostly the same parameters as the official API, but provides a more readable alternative to explicit http requests.
+This Viber bot is a thin wrapper for Viber REST API, written in Ruby. It uses mostly the same parameters as the official API, but provides a more readable alternative to explicit http requests.
 
 ## Installation
 Add this line to your application's Gemfile:
@@ -10,12 +10,12 @@ gem 'viberroo', '~> 0.0.8'
 
 And then execute:
 ```bash
-  $ bundle install
+$ bundle install
 ```
 
 Or install it yourself as:
 ```bash
-  $ gem install viberroo
+$ gem install viberroo
 ```
 
 ## Usage
@@ -26,7 +26,7 @@ During webhook setup you need to specify an URL signed by known CA. This might s
 
 Rake task is good way of managing webhooks:
 ```bash
-  $ rails g task viber set_webhook remove_webhook
+$ rails g task viber set_webhook remove_webhook
 ```
 ``` ruby
   # lib/tasks/viber.rake
@@ -77,7 +77,7 @@ In our controller we'll need to initiate a `Viberroo::Response` object and pass 
 
 At this point running `set_webhook` task should return `{ "status":0, "status_message":"ok", ... }`:
 ```bash
-  $ rake viber:set_webhook
+$ rake viber:set_webhook
 ```
 
 From here we can fork the flow of execution based on event type as shown in `handle_event` method; when event type is 'message' - based on message text as shown in `handle_message` method. More information on callback events can be found in 'Callbacks' section in [API Documentation](https://developers.viber.com/docs/api/rest-bot-api/#callbacks)
@@ -151,8 +151,77 @@ The Viber API allows sending a custom keyboard with predefined replies or action
 Each button ActionType has a corresponding method inside `Viberroo::Input` module. `keyboard` method also comes from there. See Viber API [Button parameters](https://viber.github.io/docs/tools/keyboards/#buttons-parameters) section for parameter explanation and possibilities.
 
 ## Documentation
-TODO: add method name/message type mapping for replies
-TODO: add method name/message type mapping for buttons
+### Bot
+`Bot` class has access to all methods that deal with requests to the Viber API. All of them send a Faraday POST request to a different _endpoint_. Some methods have _default parameters_ which can be appended or overridden by _params_. Each returns a [faraday response](https://www.rubydoc.info/gems/faraday/Faraday/Response).
+
+#### **set\_webhook**(_params_)
+_endpoint:_ /set_webhook\
+_default parameters:_ none
+
+#### **remove\_webhook**
+_endpoint:_ /remove_webhook\
+_default parameters:_ none
+
+#### **send\_message**(_params_)
+_endpoint:_ /remove_webhook\
+_default parameters:_ `type: 'text'`
+
+#### **send\_rich\_media**(_params_)
+_endpoint:_ /send_message\
+_default parameters:_ `type: 'rich_media'`
+
+#### **send\_location**(_params_)
+_endpoint:_ /send_message\
+_default parameters:_ `type: 'location'`
+
+#### **send\_picture**(_params_)
+_endpoint:_ /send_message\
+_default parameters:_ `type: 'picture'`
+
+#### **send\_video**(_params_)
+_endpoint:_ /send_message\
+_default parameters:_ `type: 'video'`
+
+#### **send\_file**(_params_)
+_endpoint:_ /send_message\
+_default parameters:_ `type: 'file'`
+
+#### **send\_contact**(_params_)
+_endpoint:_ /send_message\
+_default parameters:_ `type: 'contact'`
+
+#### **send\_url**(_params_)
+_endpoint:_ /send_message\
+_default parameters:_ `type: 'url'`
+
+#### **send\_sticker**(_params_)
+_endpoint:_ /send_message\
+_default parameters:_ `type: 'sticker'`
+
+### Input
+`Input` module methods are used as a declarative wrappers with predefined types for different UI elements.
+Each has _default parameters_ which can be appended or overridden by _params_.
+
+#### **keyboard**(_params_)
+_default parameters:_ `Type: 'keyboard'`
+
+### Input::Button
+`Button` class methods can be coupled with `Input.keyboard` or used on their own. Each has _default parameters_ which can be appended or overridden by _params_.
+
+#### **self.reply**(_params_)
+_default parameters:_ `ActionType: 'reply'`
+
+#### **self.url**(_params_)
+_default parameters:_ `ActionType: 'open-url'`
+
+#### **self.location\_picker**(_params_)
+_default parameters:_ `ActionType: 'location-picker'`
+
+#### **self.share\_phone**(_params_)
+_default parameters:_ `ActionType: 'share-phone'`
+
+#### **self.none**(_params_)
+_default parameters:_ `ActionType: 'none'`
 
 ## Development
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -161,12 +230,12 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ### TODO
 * Implement following Viber API features:
-  * [Broadcast Message](https://developers.viber.com/docs/api/rest-bot-api/#broadcast-message);
-  * [Get Account Info](https://developers.viber.com/docs/api/rest-bot-api/#get-account-info);
-  * [Get User Details](https://developers.viber.com/docs/api/rest-bot-api/#get-user-details);
-  * [Get Online](https://developers.viber.com/docs/api/rest-bot-api/#get-online);
-* add proper API response logging;
-* add errors for required parameters for each request;
+  * [Broadcast Message](https://developers.viber.com/docs/api/rest-bot-api/#broadcast-message)
+  * [Get Account Info](https://developers.viber.com/docs/api/rest-bot-api/#get-account-info)
+  * [Get User Details](https://developers.viber.com/docs/api/rest-bot-api/#get-user-details)
+  * [Get Online](https://developers.viber.com/docs/api/rest-bot-api/#get-online)
+* add proper API response logging
+* add errors for required parameters for each request
 
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at https://github.com/vikdotdev/viberroo.
