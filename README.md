@@ -5,7 +5,7 @@ This Viber bot is a thin wrapper for Viber REST API, written in Ruby. It uses mo
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'viberroo', '~> 0.0.8'
+gem 'viberroo', '~> 0.0.9'
 ```
 
 And then execute:
@@ -51,7 +51,7 @@ $ rails g task viber set_webhook remove_webhook
     end
   end
 ```
-It's a good idea to hide you API token in `.env` file or use something like Rails' credentials. We won't run our task just yet - during task execution API will make a request to our server to make sure it exists, and we'll need to handle that first. The `/viber` part in the `params[:url]` is pointing to the controller which we're about to create next.
+It's a good idea to hide your API token in an environment variable or something like Rails' credentials. We won't run our task just yet - during task execution API will make a request to our server to make sure it exists, and we'll need to handle that first. The `/viber` part in the `params[:url]` is pointing to the controller which we're about to create next.
 
 ### Controller
 Generate a controller with something like `rails g controller viber callback` and point a route to it:
@@ -112,7 +112,7 @@ From here we can fork the flow of execution based on event type as shown in `han
   end
 ```
 
-To respond back to the user `Viberroo::Bot` class is equiped with a method for each [message type](https://developers.viber.com/docs/api/rest-bot-api/#message-types). See method name/message type mapping in [documentation](# Documentation).
+To respond back to the user `Viberroo::Bot` class is equipped with a method for each [message type](https://developers.viber.com/docs/api/rest-bot-api/#message-types). See method name/message type mapping in [documentation](#documentation).
 ``` ruby
   # app/controllers/viber_controller.rb
     ...
