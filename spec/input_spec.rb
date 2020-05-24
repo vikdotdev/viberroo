@@ -1,43 +1,41 @@
 require 'spec_helper'
 
 RSpec.describe Viberroo::Input do
-  describe 'Button.reply' do
+  subject { Viberroo::Input }
+
+  describe '#self.reply_button' do
     it 'has correct ActionType' do
-      expect(subject::Button.reply).to include({ ActionType: 'reply' })
+      expect(subject.reply_button({})).to include({ ActionType: 'reply' })
     end
   end
 
-  describe 'Button.url' do
+  describe '#self.url_button' do
     it 'has correct ActionType' do
-      expect(subject::Button.url).to include({ ActionType: 'open-url' })
-    end
-
-    it 'has correct min_api_version'
-  end
-
-  describe 'Button.location_picker' do
-    it 'has correct ActionType' do
-      expect(subject::Button.location_picker).to include({ ActionType: 'location-picker' })
+      expect(subject.url_button({})).to include({ ActionType: 'open-url' })
     end
   end
 
-  describe 'Button.none' do
+  describe '#self.location_picker_button' do
     it 'has correct ActionType' do
-      expect(subject::Button.none).to include({ ActionType: 'none' })
+      expect(subject.location_picker_button({})).to include({ ActionType: 'location-picker' })
     end
   end
 
-  describe 'Button.share_phone' do
+  describe '#self.none_button' do
     it 'has correct ActionType' do
-      expect(subject::Button.share_phone).to include({ ActionType: 'share-phone' })
+      expect(subject.none_button({})).to include({ ActionType: 'none' })
     end
   end
 
-  describe 'Input::keyboard' do
-    include Viberroo::Input
+  describe '#self.share_phone_button' do
+    it 'has correct ActionType' do
+      expect(subject.share_phone_button({})).to include({ ActionType: 'share-phone' })
+    end
+  end
 
+  describe '#self.keyboard' do
     it 'has correct Type' do
-      expect(keyboard).to include({ Type: 'keyboard' })
+      expect(subject.keyboard({})).to include({ keyboard: { Type: 'keyboard' }})
     end
   end
 end

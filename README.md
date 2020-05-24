@@ -231,11 +231,8 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 ### TODO
 * Implement following Viber API features:
   * [Broadcast Message](https://developers.viber.com/docs/api/rest-bot-api/#broadcast-message)
-  * [Get Account Info](https://developers.viber.com/docs/api/rest-bot-api/#get-account-info)
-  * [Get User Details](https://developers.viber.com/docs/api/rest-bot-api/#get-user-details)
-  * [Get Online](https://developers.viber.com/docs/api/rest-bot-api/#get-online)
+  * [Welcome message](https://developers.viber.com/docs/api/rest-bot-api/#sending-a-welcome-message)
 * add proper API response logging
-* add errors for required parameters for each request
 
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at https://github.com/vikdotdev/viberroo.
