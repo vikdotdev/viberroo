@@ -3,93 +3,190 @@ require 'spec_helper'
 RSpec.describe Viberroo::Bot do
   let(:token) { '1234567890' }
   let(:headers) { { 'X-Viber-Auth-Token': token } }
-  let(:response) do
-    Viberroo::Response.init(
-      event: 'message',
-      sender: { id: '01234=' }
-    )
-  end
-  let(:bot) { Viberroo::Bot.new(token: token, response: response) }
+  let(:api_response) { { body: { status: 0, status_message: 'ok' }.to_json } }
+  let(:callback_response) { Viberroo::Response.init(event: 'message', sender: { id: '01234=' }) }
+  let(:bot) { Viberroo::Bot.new(token: token, response: callback_response) }
 
-  describe '#set_webhook' do
-    let!(:url) { Viberroo::URL::WEBHOOK }
-    let!(:params) do
+  describe 'setting a webhook' do
+    let!(:body) do
       { url: 'http://my.host.com', event_types: %w[conversation_started] }
     end
+    let!(:request) do
+      stub_request(:post, Viberroo::URL::WEBHOOK)
+        .with(body: body, headers: headers)
+        .and_return(api_response)
+    end
 
-    it 'makes a request with correct url, body and headers' do
-      request = stub_request(:post, url).with(body: params, headers: headers)
-      bot.set_webhook(params)
+    before { subject }
 
-      expect(request).to have_been_made.once
+    context 'with #set_webhook' do
+      subject { bot.set_webhook(body) }
+
+      it 'makes a request with correct url, body and headers' do
+        expect(request).to have_been_made.once
+      end
+    end
+
+    context 'with #set_webhook!' do
+      subject { bot.set_webhook!(body) }
+
+      it 'makes a request with correct url, body and headers' do
+        expect(request).to have_been_made.once
+      end
+
+      it { is_expected.to be_a(Hash) }
     end
   end
 
-  describe '#remove_webhook' do
-    let!(:url) { Viberroo::URL::WEBHOOK }
-    let!(:params) { { url: '' } }
+  describe 'removing a webhook' do
+    let!(:request) do
+      stub_request(:post, Viberroo::URL::WEBHOOK)
+        .with(headers: headers)
+        .and_return(api_response)
+    end
 
-    it 'makes a request with correct url, body and headers' do
-      request = stub_request(:post, url).with(body: params, headers: headers)
+    before { subject }
 
-      bot.remove_webhook
-      expect(request).to have_been_made.once
+    context 'with #remove_webhook' do
+      subject { bot.remove_webhook }
+
+      it 'makes a request with correct url, body and headers' do
+        expect(request).to have_been_made.once
+      end
+    end
+
+    context 'with #remove_webhook!' do
+      subject { bot.remove_webhook! }
+
+      it 'makes a request with correct url, body and headers' do
+        expect(request).to have_been_made.once
+      end
+
+      it { is_expected.to be_a(Hash) }
     end
   end
 
-  describe '#send' do
-    let!(:url) { Viberroo::URL::MESSAGE }
+  describe 'sending a message' do
     let!(:message) do
       {
         text: 'hello',
         event: 'message',
         sender: { id: '1234=' },
-        receiver: response.user_id
+        receiver: callback_response.user_id
       }
     end
+    let!(:request) do
+      stub_request(:post, Viberroo::URL::MESSAGE)
+        .with(body: message, headers: headers)
+        .and_return(api_response)
+    end
 
-    it 'makes a request with correct url, body and headers' do
-      request = stub_request(:post, url).with(body: message, headers: headers)
+    before { subject }
 
-      bot.send(message: message)
-      expect(request).to have_been_made.once
+    context 'with #send' do
+      subject { bot.send(message: message) }
+
+      it 'makes a request with correct url, body and headers' do
+        expect(request).to have_been_made.once
+      end
+    end
+
+    context 'with #send!' do
+      subject { bot.send!(message: message) }
+
+      it 'makes a request with correct url, body and headers' do
+        expect(request).to have_been_made.once
+      end
+
+      it { is_expected.to be_a(Hash) }
     end
   end
 
   describe '#broadcast message'
 
-  describe '#get_account_info' do
-    let!(:url) { Viberroo::URL::GET_ACCOUNT_INFO }
+  describe 'getting account info' do
+    let!(:request) do
+      stub_request(:post, Viberroo::URL::GET_ACCOUNT_INFO)
+        .with(headers: headers)
+        .and_return(api_response)
+    end
 
-    it 'makes a request with correct url, body and headers' do
-      request = stub_request(:post, url).with(body: {}, headers: headers)
+    before { subject }
 
-      bot.get_account_info
-      expect(request).to have_been_made.once
+    context 'with #get_account_info' do
+      subject { bot.get_account_info }
+
+      it 'makes a request with correct url, body and headers' do
+        expect(request).to have_been_made.once
+      end
+    end
+
+    context 'with #get_account_info!' do
+      subject { bot.get_account_info! }
+
+      it 'makes a request with correct url, body and headers' do
+        expect(request).to have_been_made.once
+      end
+
+      it { is_expected.to be_a(Hash) }
     end
   end
 
-  describe '#get_user_details' do
-    let!(:url) { Viberroo::URL::GET_USER_DETAILS }
+  describe 'getting user details' do
     let!(:params) { { id: '1234567890=' } }
+    let!(:request) do
+      stub_request(:post, Viberroo::URL::GET_USER_DETAILS)
+        .with(body: params, headers: headers)
+        .and_return(api_response)
+    end
 
-    it 'makes a request with correct url, body and headers' do
-      request = stub_request(:post, url).with(body: params, headers: headers)
+    before { subject }
 
-      bot.get_user_details(params)
-      expect(request).to have_been_made.once
+    context 'with #get_user_details' do
+      subject { bot.get_user_details(params) }
+
+      it 'makes a request with correct url, body and headers' do
+        expect(request).to have_been_made.once
+      end
+    end
+
+    context 'with #get_user_details!' do
+      subject { bot.get_user_details!(params) }
+
+      it 'makes a request with correct url, body and headers' do
+        expect(request).to have_been_made.once
+      end
+
+      it { is_expected.to be_a(Hash) }
     end
   end
 
-  describe '#get_online' do
-    let!(:url) { Viberroo::URL::GET_ONLINE }
+  describe 'getting online' do
     let!(:params) { { ids: %w[1234= 2532= 8587=] } }
+    let!(:request) do
+      stub_request(:post, Viberroo::URL::GET_ONLINE)
+        .with(body: params, headers: headers)
+        .and_return(api_response)
+    end
 
-    it 'makes a request with correct url, body and headers' do
-      request = stub_request(:post, url).with(body: params, headers: headers)
+    before { subject }
 
-      bot.get_online(params)
-      expect(request).to have_been_made.once
+    context 'with #get_online' do
+      subject { bot.get_online(params) }
+
+      it 'makes a request with correct url, body and headers' do
+        expect(request).to have_been_made.once
+      end
+    end
+
+    context 'with #get_online!' do
+      subject { bot.get_online!(params) }
+
+      it 'makes a request with correct url, body and headers' do
+        expect(request).to have_been_made.once
+      end
+
+      it { is_expected.to be_a(Hash) }
     end
   end
 end

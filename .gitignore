@@ -11,3 +11,4 @@ Gemfile.lock
 viberroo-*
 .byebug_history
 .DS_Store
+spec/examples.txt
