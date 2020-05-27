@@ -1,97 +1,58 @@
 require 'spec_helper'
 
 RSpec.describe Viberroo::Message do
-  let(:response) { Viberroo::Response.init(message_params) }
-  let(:bot) { Viberroo::Bot.new(token: token, response: response) }
-  let(:receiver) { response.user_id }
+  describe '#text' do
+    subject { Viberroo::Message.plain(text_params) }
 
-  describe 'send_message' do
-    it 'requests API with correct params' do
-      body = hash_including(type: 'text', receiver: receiver)
-      stub = stub_request(:post, message_url).with(body: body, headers: headers)
-
-      bot.send_message(message_params)
-      expect(stub).to have_been_made.once
-    end
+    it { is_expected.to include({ type: :text }) }
   end
 
-  describe 'send_rich_media' do
-    it 'requests API with correct params' do
-      body = hash_including(type: 'rich_media', receiver: receiver, min_api_version: 2)
-      stub = stub_request(:post, message_url).with(body: body, headers: headers)
+  describe '#rich' do
+    subject { Viberroo::Message.rich(rich_params) }
 
-      bot.send_rich_media(rich_media_params)
-      expect(stub).to have_been_made.once
-    end
+    it { is_expected.to include({ type: :rich_media }) }
+    it { is_expected.to include({ min_api_version: 2 }) }
   end
 
-  describe 'send_location' do
-    it 'requests API with correct params' do
-      body = hash_including(type: 'location', receiver: receiver)
-      stub = stub_request(:post, message_url).with(body: body, headers: headers)
+  describe '#location' do
+    subject { Viberroo::Message.location(location_params) }
 
-      bot.send_location(location_params)
-      expect(stub).to have_been_made.once
-    end
+    it { is_expected.to include({ type: :location }) }
   end
 
-  describe 'send_picture' do
-    it 'requests API with correct params' do
-      body = hash_including(type: 'picture', receiver: receiver)
-      stub = stub_request(:post, message_url).with(body: body, headers: headers)
+  describe '#picture' do
+    subject { Viberroo::Message.picture(picture_params) }
 
-      bot.send_picture(picture_params)
-      expect(stub).to have_been_made.once
-    end
+    it { is_expected.to include({ type: :picture }) }
   end
 
-  describe 'send_url' do
-    it 'requests API with correct params' do
-      body = hash_including(type: 'url', receiver: receiver)
-      stub = stub_request(:post, message_url).with(body: body, headers: headers)
+  describe '#url' do
+    subject { Viberroo::Message.video(video_params) }
 
-      bot.send_url(url_params)
-      expect(stub).to have_been_made.once
-    end
+    it { is_expected.to include({ type: :video }) }
   end
 
-  describe 'send_video' do
-    it 'requests API with correct params' do
-      body = hash_including(type: 'video', receiver: receiver)
-      stub = stub_request(:post, message_url).with(body: body, headers: headers)
+  describe '#video' do
+    subject { Viberroo::Message.file(file_params) }
 
-      bot.send_video(video_params)
-      expect(stub).to have_been_made.once
-    end
+    it { is_expected.to include({ type: :file }) }
   end
 
-  describe 'send_file' do
-    it 'requests API with correct params' do
-      body = hash_including(type: 'file', receiver: receiver)
-      stub = stub_request(:post, message_url).with(body: body, headers: headers)
+  describe '#file' do
+    subject { Viberroo::Message.contact(contact_params) }
 
-      bot.send_file(file_params)
-      expect(stub).to have_been_made.once
-    end
+    it { is_expected.to include({ type: :contact }) }
   end
 
-  describe 'send_contact' do
-    it 'requests API with correct params' do
-      body = hash_including(type: 'contact', receiver: receiver)
-      stub = stub_request(:post, message_url).with(body: body, headers: headers)
+  describe '#contact' do
+    subject { Viberroo::Message.url(url_params) }
 
-      bot.send_contact(contact_params)
-      expect(stub).to have_been_made.once
-    end
+    it { is_expected.to include({ type: :url }) }
   end
 
-  describe 'send_sticker' do
-    it 'requests API with correct params' do
-      body = hash_including(type: 'sticker', receiver: receiver)
-      stub = stub_request(:post, message_url).with(body: body, headers: headers)
+  describe '#sticker' do
+    subject { Viberroo::Message.sticker(sticker_params) }
 
-      bot.send_sticker(sticker_params)
-      expect(stub).to have_been_made.once
-    end
+    it { is_expected.to include({ type: :sticker }) }
   end
 end

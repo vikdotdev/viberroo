@@ -19,6 +19,8 @@ module Viberroo
           @@os.user_id
         when 'message'
           @@os.sender.id
+        else
+          @@os.dig(:user, :id)
         end
       end
     end
