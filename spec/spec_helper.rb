@@ -75,6 +75,7 @@ RSpec.configure do |config|
   config.warnings = true
   # config.profile_examples = 10
   config.order = :random
-  config.shared_context_metadata_behavior = :apply_to_host_groups
   Kernel.srand config.seed
+  config.filter_run_when_matching :focus
+  config.example_status_persistence_file_path = 'spec/examples.txt'
 end

@@ -5,7 +5,7 @@ This Viber bot is a thin wrapper for Viber REST API, written in Ruby. It uses mo
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'viberroo', '~> 0.1.0'
+gem 'viberroo', '~> 0.1.1'
 ```
 
 And then execute:
@@ -41,13 +41,13 @@ $ rails g task viber set_webhook remove_webhook
         send_photo: true
       }
 
-      puts bot.set_webhook(params).body
+      puts bot.set_webhook!(params)
     end
 
     task remove_webhook: :environment do
       bot = Viberroo::Bot.new(token: 'YOUR_VIBER_API_TOKEN')
 
-      puts bot.remove_webhook.body
+      puts bot.remove_webhook!
     end
   end
 ```
@@ -112,7 +112,7 @@ From here we can fork the flow of execution based on event type as shown in `han
   end
 
   def greet_user
-    message = Message.plain(text: 'Hello there! Type /start to get started.')
+    message = Viberroo::Message.plain(text: 'Hello there! Type /start to get started.')
     @bot.send(message: message)
   end
 ```
@@ -160,7 +160,7 @@ Each buttons' `'ActionType'` has a corresponding method inside `Viberroo::Input`
 
 ## Documentation
 ### Bot
-Is responsible for sending requests to Viber API. Each request sends a Faraday POST request to a particular endpoint. Each returns a [faraday response](https://www.rubydoc.info/gems/faraday/Faraday/Response).
+Is responsible for sending requests to Viber API. Each request sends a Faraday POST request to a particular endpoint. There are a _bang_(`!`) variant for each method. Each regular method returns a [faraday response](https://www.rubydoc.info/gems/faraday/Faraday/Response). Each _bang_ method returns parsed response body.
 
 #### `new(token:, response: {})`
 * Parameters
@@ -171,14 +171,20 @@ Is responsible for sending requests to Viber API. Each request sends a Faraday P
 * Parameters
   * `url` `<String>` Account webhook URL to receive callbacks.
   * `event_types` `<Array>` Indicates the types of events that the bot would receive from API. **API Default**: `%w[delivered seen failed subscribed unsubscribed conversation_started]`.
-  * `send_name` `<bool>` Indicates whether or not the bot should receive the user name. **API Default** `false`.
-  * `send_photo` `<bool>` Indicates whether or not the bot should receive the user photo. **API Default**: `false`.
+  * `send_name` `<TrueClass> | <FalseClass>` Indicates whether or not the bot should receive the user name. **API Default** `false`.
+  * `send_photo` `<TrueClass> | <FalseClass>` Indicates whether or not the bot should receive the user photo. **API Default**: `false`.
 * Returns: `<Faraday::Response>`
 * Endpoint: `/set_webhook`
+
+#### `set_webhook!(url:, event_types: nil, send_name: nil, send_photo: nil)`
+Same as `set_webhook` except returns parsed response body of type `<Hash>`.
 
 #### `remove_webhook`
 * Returns: `<Faraday::Response>`
 * Endpoint: `/set_webhook`
+
+#### `remove_webhook!`
+Same as `remove_webhook` except returns parsed response body of type `<Hash>`.
 
 #### `send(message:, keyboard: {})`
 * Parameters
@@ -189,6 +195,9 @@ Is responsible for sending requests to Viber API. Each request sends a Faraday P
 * Returns: `<Faraday::Response>`
 * Endpoint: `/send_message`
 
+#### `send!(message:, keyboard: {})`
+Same as `send` except returns parsed response body of type `<Hash>`.
+
 #### `broadcast_message(message:, to:)`
 Maximum total JSON size of the request is 30kb. The maximum list length is 300 receivers. The Broadcast API is used to send messages to multiple recipients with a rate limit of 500 requests in a 10 seconds window.
 * Parameters
@@ -197,9 +206,15 @@ Maximum total JSON size of the request is 30kb. The maximum list length is 300 r
 * Returns: `<Faraday::Response>`
 * Endpoint: `/broadcast_message`
 
+#### `broadcast_message!(message:, to:)`
+Same as `broadcast_message` except returns parsed response body of type `<Hash>`.
+
 #### `get_account_info`
 * Returns: `<Faraday::Response>`
 * Endpoint: `/get_account_info`
+
+#### `get_account_info!`
+Same as `get_account_info` except returns parsed response body of type `<Hash>`.
 
 #### `get_user_details(id:)`
 * Parameters
@@ -207,11 +222,17 @@ Maximum total JSON size of the request is 30kb. The maximum list length is 300 r
 * Returns: `<Faraday::Response>`
 * Endpoint: `/get_user_details`
 
+#### `get_user_details!(id:)`
+Same as `get_user_details` except returns parsed response body of type `<Hash>`.
+
 #### `get_online(ids:)`
 * Parameters
   * `ids` `<String[]>` Subscribed user ids, maximum of 100 of them per request.
 * Returns: `<Faraday::Response>`
 * Endpoint: `/get_user_details`
+
+#### `get_online(ids:)`
+Same as `get_online` except returns parsed response body of type `<Hash>`.
 
 ### Message
 `Message` module methods are used as a declarative wrappers with predefined types for each message type Viber API offers.
