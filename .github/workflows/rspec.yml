@@ -1,10 +1,10 @@
-name: RSpec
+name: Test
 
-on: [push, pull_request]
+on: push
 
 jobs:
   rspec-test:
-    name: RSpec
+    name: Run RSpec
     runs-on: ubuntu-latest
 
     steps:
