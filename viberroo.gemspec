@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
     lib/viberroo/version.rb
     lib/viberroo/message.rb
     lib/viberroo/input.rb
-    lib/viberroo/response.rb
+    lib/viberroo/callback.rb
     lib/viberroo/bot.rb
   ]
   s.require_paths = ['lib']
