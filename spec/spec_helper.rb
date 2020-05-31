@@ -8,7 +8,7 @@ RSpec.shared_context 'events' do
   let(:message_event_params) do
     { event: 'message', sender: { id: 'message01234' } }
   end
-  let(:set_webhook_event_params) do
+  let(:webhook_event_params) do
     { event: 'webhook' }
   end
   let(:conversation_started_event_params) do

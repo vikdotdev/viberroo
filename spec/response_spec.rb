@@ -2,8 +2,8 @@ require 'spec_helper'
 
 RSpec.describe Viberroo::Response do
   describe 'init' do
-    it 'returns response on set_webhook event' do
-      response = subject.class.init(set_webhook_event_params)
+    it 'returns response on webhook event' do
+      response = subject.class.init(webhook_event_params)
       expect(response.user_id).to eq(nil)
       expect(response).not_to eq(nil)
     end

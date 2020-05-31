@@ -4,6 +4,7 @@ module Viberroo
   class Response
     class << self
       def init(params)
+        warn 'WARNING: Response.init is deprecated and will be gone in next minor release. Use Callback.new as a replacement.'
         @@os = RecursiveOpenStruct.new params.to_h
         @@os.user_id = user_id
         @@os

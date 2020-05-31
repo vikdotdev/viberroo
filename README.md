@@ -5,7 +5,7 @@ This Viber bot is a thin wrapper for Viber REST API, written in Ruby. It uses mo
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'viberroo', '~> 0.1.1'
+gem 'viberroo', '~> 0.1.2'
 ```
 
 And then execute:
@@ -66,14 +66,14 @@ class ViberController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def callback
-    @response = Viberroo::Response.init(params.permit!)
-    @bot = Viberroo::Bot.new(token: 'YOUR_VIBER_API_TOKEN', response: @response)
+    @callback = Viberroo::Callback.new(params.permit!)
+    @bot = Viberroo::Bot.new(token: 'YOUR_VIBER_API_TOKEN', callback: @callback)
 
     head :ok
   end
 end
 ```
-Note that `params.permit!` is necessary to form a correct `Response` object.
+Note that `params.permit!` is necessary to form a correct `Callback` object.
 
 At this point running `set_webhook` task should return `{ "status":0, "status_message":"ok", ... }`:
 ```bash
@@ -94,7 +94,7 @@ From here we can fork the flow of execution based on event type as shown in `han
   private
 
   def handle_event
-    case @response.event
+    case @callback.params.event
     when 'message'
       handle_message
     when 'conversation_started'
@@ -103,7 +103,7 @@ From here we can fork the flow of execution based on event type as shown in `han
   end
 
   def handle_message
-    case @response.message.text
+    case @callback.params.message.text
     when '/start'
       choose_action
     when '/help'
@@ -162,10 +162,10 @@ Each buttons' `'ActionType'` has a corresponding method inside `Viberroo::Input`
 ### Bot
 Is responsible for sending requests to Viber API. Each request sends a Faraday POST request to a particular endpoint. There are a _bang_(`!`) variant for each method. Each regular method returns a [faraday response](https://www.rubydoc.info/gems/faraday/Faraday/Response). Each _bang_ method returns parsed response body.
 
-#### `new(token:, response: {})`
+#### `new(token:, callback: {})`
 * Parameters
   * `token` `<String>` required.
-  * `response` `<Hash>` optional.
+  * `callback` `<Hash>` optional.
 
 #### `set_webhook(url:, event_types: nil, send_name: nil, send_photo: nil)`
 * Parameters
@@ -344,9 +344,19 @@ All the other buttons have the exactly the same signature except of `ActionType`
 #### `none_button(params = {})`
 * `ActionType` `<String>` **Default**: `'none'`.
 
-### Response
-Accepts callback parameters and turns them into `RecursiveOpenStruct`. Also sets
-`user_id` based on callback `event`.
+### Callback
+Wraps callback response and provids helper methods for easier parameter access.
+
+#### `new(params)`
+* Parameters
+  * `params` `<Hash>` parameters of an API callback.
+
+#### `params`
+* Returns `<RecursiveOpenStruct>` callback parameters.
+
+#### `user_id`
+ Location of user id in response object depends on callback event type. This method puts it in one place, independent of callback event type. Original user id params remain available in `params`.
+* Returns `<String>` user id.
 
 ## Development
 After checking out the repository, run `bin/setup` to install dependencies. Then, run `rspec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
