@@ -3,6 +3,8 @@ name: Publish
 on:
   push:
     branches: [ master ]
+    paths:
+    - 'lib/**'
 
 jobs:
   build:
