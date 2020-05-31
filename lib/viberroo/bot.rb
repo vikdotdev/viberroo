@@ -1,9 +1,7 @@
-require 'byebug'
 module Viberroo
   class Bot
-    def initialize(token:, callback: {}, response: {})
+    def initialize(token:, callback: nil)
       @headers = { 'X-Viber-Auth-Token': token, 'Content-Type': 'application/json' }
-      @response = response
       @callback = callback
     end
 
@@ -28,14 +26,8 @@ module Viberroo
     end
 
     def send(message:, keyboard: {})
-      if @callback.is_a?(Callback)
-        receiver = @callback.user_id
-      elsif @response.is_a?(RecursiveOpenStruct)
-        receiver = @response.user_id
-      end
-
       request(URL::MESSAGE,
-              { receiver: receiver }.merge(message).merge(keyboard))
+              { receiver: @callback&.user_id }.merge(message).merge(keyboard))
     end
 
     def send!(message:, keyboard: {})
