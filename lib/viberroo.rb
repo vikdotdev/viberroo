@@ -1,5 +1,4 @@
 require 'json'
-require 'faraday'
 require 'viberroo/configuration'
 require 'viberroo/message'
 require 'viberroo/input'

@@ -1,3 +1,6 @@
+require 'net/http'
+require 'uri'
+
 module Viberroo
   class Bot
     def initialize(token: nil, response: nil, callback: nil)
@@ -75,7 +78,14 @@ module Viberroo
     private
 
     def request(url, params = {})
-      response = Faraday.post(url, compact(params).to_json, @headers)
+      uri = URI(url)
+
+      response = Net::HTTP.start(uri.host, uri.port, use_ssl: true) do |http|
+        request = Net::HTTP::Post.new(uri, @headers)
+        request.body = compact(params).to_json
+
+        http.request(request)
+      end
 
       Viberroo.config.logger&.info("##{caller_name} -- #{response.body}")
 
