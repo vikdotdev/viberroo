@@ -5,7 +5,7 @@ RSpec.describe Viberroo::Bot do
   let(:headers) { { 'X-Viber-Auth-Token': token } }
   let(:api_response) { { body: { status: 0, status_message: 'ok' }.to_json } }
   let(:callback_response) { Viberroo::Callback.new(event: 'message', sender: { id: '01234=' }) }
-  let(:bot) { Viberroo::Bot.new(token: token, response: callback_response) }
+  let(:bot) { Viberroo::Bot.new(token: token, callback: callback_response) }
 
   describe 'setting a webhook' do
     let!(:body) do
