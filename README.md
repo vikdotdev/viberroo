@@ -5,7 +5,7 @@ This Viber bot is a thin wrapper for Viber REST API, written in Ruby. It uses mo
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'viberroo', '~> 0.1.2'
+gem 'viberroo', '~> 0.2.0'
 ```
 
 And then execute:
@@ -345,7 +345,7 @@ All the other buttons have the exactly the same signature except of `ActionType`
 * `ActionType` `<String>` **Default**: `'none'`.
 
 ### Callback
-Wraps callback response and provids helper methods for easier parameter access.
+Wraps callback response and provides helper methods for easier parameter access.
 
 #### `new(params)`
 * Parameters
