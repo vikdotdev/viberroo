@@ -1,10 +1,6 @@
 name: Test
 
-on:
-  push:
-    paths:
-    - 'lib/**'
-    - 'spec/**'
+on: push
 
 jobs:
   rspec-test:

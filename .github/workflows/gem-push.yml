@@ -1,14 +1,14 @@
-name: Publish
+name: Release
 
 on:
   push:
     branches: [ master ]
     paths:
-    - 'lib/**'
+      - 'lib/**'
 
 jobs:
   build:
-    name: Release
+    name: Publish
     runs-on: ubuntu-latest
 
     steps:
