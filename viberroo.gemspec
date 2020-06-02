@@ -12,6 +12,7 @@ Gem::Specification.new do |s|
   s.files = %w[
     lib/viberroo.rb
     lib/viberroo/version.rb
+    lib/viberroo/configuration.rb
     lib/viberroo/message.rb
     lib/viberroo/input.rb
     lib/viberroo/callback.rb

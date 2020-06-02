@@ -1,10 +1,11 @@
 require 'json'
 require 'faraday'
+require 'viberroo/configuration'
 require 'viberroo/message'
-require 'viberroo/bot'
 require 'viberroo/input'
 require 'viberroo/callback'
 require 'viberroo/bot'
+require 'logger'
 
 module Viberroo
   module URL
