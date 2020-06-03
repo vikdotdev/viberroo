@@ -5,7 +5,7 @@ This Viber bot is a thin wrapper for Viber REST API, written in Ruby. It uses mo
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'viberroo', '~> 0.2.0'
+gem 'viberroo', '~> 0.2.1'
 ```
 
 And then execute:
@@ -32,36 +32,39 @@ $ rails g task viber set_webhook remove_webhook
   # lib/tasks/viber.rake
   namespace :viber do
     task set_webhook: :environment do
-      bot = Viberroo::Bot.new(token: 'YOUR_VIBER_API_TOKEN')
-
-      params = {
+      Viberroo::Bot.new.set_webhook!(
         url: 'https://<your_ngrok_public_address>/viber',
         event_types: %w[conversation_started subscribed unsubscribed],
         send_name: true,
         send_photo: true
-      }
-
-      puts bot.set_webhook!(params)
+      )
     end
 
     task remove_webhook: :environment do
-      bot = Viberroo::Bot.new(token: 'YOUR_VIBER_API_TOKEN')
-
-      puts bot.remove_webhook!
+      Viberroo::Bot.new.remove_webhook!
     end
   end
 ```
-We won't run our task just yet - during task execution API will make a request to our server to make sure it exists, and we'll need to handle that first. The `/viber` part in the `params[:url]` is pointing to the controller which we're about to create next.
+We won't run our task just yet - during task execution API will make a callback request to our server to make sure it exists, and we'll need to handle that first. Also you'll need to provide your Viber API token:
+``` ruby
+# config/initializers/viberroo.rb
+
+Viberroo.configure do |config|
+  config.auth_token = '<your_viber_bot_api_token>'
+end
+```
 
 ### Controller
 Generate a controller with something like `rails g controller viber callback` and point a route to it:
 ```ruby
 # config/routes.rb
+
 post '/viber' => 'viber#callback'
 ```
 
 ```ruby
 # app/controllers/viber_controller.rb
+
 class ViberController < ApplicationController
   skip_before_action :verify_authenticity_token
 
@@ -85,7 +88,7 @@ From here we can fork the flow of execution based on event type as shown in `han
   # app/controllers/viber_controller.rb
   ...
   def callback
-    ...
+    # ...
     handle_event
 
     head :ok
@@ -120,7 +123,8 @@ From here we can fork the flow of execution based on event type as shown in `han
 To respond back to the user `Viberroo::Bot` class is equipped with `send` method which accepts various [message types](https://developers.viber.com/docs/api/rest-bot-api/#message-types). See _method name/message type_ mapping in [documentation](#documentation).
 ``` ruby
   # app/controllers/viber_controller.rb
-  ...
+
+  # ...
 
   def display_help
     message = Viberroo::Message.plain(text: 'Type /start to get started!')
@@ -133,7 +137,8 @@ The Viber API allows sending a custom keyboard with predefined replies or action
   # app/controllers/viber_controller.rb
   class ViberController < ApplicationController
     include Viberroo
-    ...
+
+    # ...
 
     def choose_action
       something = Input.reply_button({
@@ -160,11 +165,11 @@ Each buttons' `'ActionType'` has a corresponding method inside `Viberroo::Input`
 
 ## Documentation
 ### Bot
-Is responsible for sending requests to Viber API. Each request sends a Faraday POST request to a particular endpoint. There are a _bang_(`!`) variant for each method. Each regular method returns a [faraday response](https://www.rubydoc.info/gems/faraday/Faraday/Response). Each _bang_ method returns parsed response body.
+Is responsible for sending requests to Viber API. Each request sends a Faraday POST request to a particular endpoint. There are a _bang_ variant for each method. Each regular method returns a [faraday response](https://www.rubydoc.info/gems/faraday/Faraday/Response). Each _bang_ method returns parsed response body.
 
-#### `new(token:, callback: {})`
+#### `initialize(token: nil, callback: {})`
 * Parameters
-  * `token` `<String>` required.
+  * `token` `<String>` optional. Normally should be provided by `Viberroo.configure.auth_token` but is available here as a shortcut when predefined configuration is undesirable. Takes precedence over `Viberroo.configure.auth_token`.
   * `callback` `<Hash>` optional.
 
 #### `set_webhook(url:, event_types: nil, send_name: nil, send_photo: nil)`
@@ -347,9 +352,9 @@ All the other buttons have the exactly the same signature except of `ActionType`
 ### Callback
 Wraps callback response and provides helper methods for easier parameter access.
 
-#### `new(params)`
+#### `initialize(params)`
 * Parameters
-  * `params` `<Hash>` parameters of an API callback.
+  * `params` `<Hash>` parameters from API callback.
 
 #### `params`
 * Returns `<RecursiveOpenStruct>` callback parameters.
@@ -361,10 +366,11 @@ Wraps callback response and provides helper methods for easier parameter access.
 ## Development
 After checking out the repository, run `bin/setup` to install dependencies. Then, run `rspec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then merge to master, GitHub actions will take care of running specs and pushing to [rubygems.org](https://rubygems.org).
+To install this gem onto your local machine, run `bundle exec rake install`. To
+release a new version, update the version number in `version.rb`, create a tag
+for a new version, and then merge to master, GitHub actions will take care of running specs and pushing to [rubygems.org](https://rubygems.org).
 
 ### TODO
-* add proper API response logging
 * make dependencies optional
 
 ## Contributing

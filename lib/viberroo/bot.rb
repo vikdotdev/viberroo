@@ -1,20 +1,23 @@
 module Viberroo
   class Bot
-    def initialize(token:, callback: nil)
-      @headers = { 'X-Viber-Auth-Token': token, 'Content-Type': 'application/json' }
+    def initialize(token: nil, callback: nil)
+      Viberroo.configure
+
+      @headers = {
+        'X-Viber-Auth-Token': token || Viberroo.config.auth_token,
+        'Content-Type': 'application/json'
+      }
       @callback = callback
     end
 
     def set_webhook(url:, event_types: nil, send_name: nil, send_photo: nil)
       request(URL::WEBHOOK, url: url, event_types: event_types,
-              send_name: send_name,
-              send_photo: send_photo)
+              send_name: send_name, send_photo: send_photo)
     end
 
     def set_webhook!(url:, event_types: nil, send_name: nil, send_photo: nil)
       parse set_webhook(url: url, event_types: event_types,
-                        send_name: send_name,
-                        send_photo: send_photo)
+                        send_name: send_name, send_photo: send_photo)
     end
 
     def remove_webhook
@@ -69,7 +72,11 @@ module Viberroo
     private
 
     def request(url, params = {})
-      Faraday.post(url, compact(params).to_json, @headers)
+      response = Faraday.post(url, compact(params).to_json, @headers)
+      message = "##{caller_name} -- #{response.body}"
+      Viberroo.config.logger&.info(message)
+
+      response
     end
 
     def parse(request)
@@ -78,6 +85,10 @@ module Viberroo
 
     def compact(params)
       params.delete_if { |_, v| v.nil? }
+    end
+
+    def caller_name
+      caller[1][/`.*'/][1..-2]
     end
   end
 end

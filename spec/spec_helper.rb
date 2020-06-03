@@ -78,4 +78,10 @@ RSpec.configure do |config|
   Kernel.srand config.seed
   config.filter_run_when_matching :focus
   config.example_status_persistence_file_path = 'spec/examples.txt'
+
+  config.before(:suite) do
+    Viberroo.configure do |config|
+      config.logger = nil
+    end
+  end
 end
