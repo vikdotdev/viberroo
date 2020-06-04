@@ -1,12 +1,15 @@
 module Viberroo
   class Bot
-    def initialize(token: nil, callback: nil)
+    def initialize(token: nil, response: nil, callback: nil)
+      warn 'DEPRECATION WARNING: callback Viberroo::Bot.new `callback:` parameter will be renamed to `response:` in next minor release.' if callback
+
       Viberroo.configure
 
       @headers = {
         'X-Viber-Auth-Token': token || Viberroo.config.auth_token,
         'Content-Type': 'application/json'
       }
+      @response = response
       @callback = callback
     end
 
@@ -30,7 +33,7 @@ module Viberroo
 
     def send(message:, keyboard: {})
       request(URL::MESSAGE,
-              { receiver: @callback&.user_id }.merge(message).merge(keyboard))
+              { receiver: @response&.user_id || @callback&.user_id }.merge(message).merge(keyboard))
     end
 
     def send!(message:, keyboard: {})
