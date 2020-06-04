@@ -1,7 +1,7 @@
 require 'recursive-open-struct'
 
 module Viberroo
-  class Callback
+  class Response
     attr_reader :params
 
     def initialize(params)

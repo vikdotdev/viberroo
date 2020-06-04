@@ -1,11 +1,11 @@
 # Viberroo
-This Viber bot is a thin wrapper for Viber REST API, written in Ruby. It uses mostly the same parameters as the official API, but provides a more readable alternative to explicit http requests.
+This Viber bot is a thin wrapper for Viber REST API, written in Ruby. It uses mostly the same parameters as the official API, and provides a more readable alternative to explicit http requests.
 
 ## Installation
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'viberroo', '~> 0.2.3'
+gem 'viberroo', '~> 0.3.0'
 ```
 
 And then execute:
@@ -69,14 +69,14 @@ class ViberController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def callback
-    @callback = Viberroo::Callback.new(params.permit!)
-    @bot = Viberroo::Bot.new(token: 'YOUR_VIBER_API_TOKEN', callback: @callback)
+    @response = Viberroo::Response.new(params.permit!)
+    @bot = Viberroo::Bot.new(response: @response)
 
     head :ok
   end
 end
 ```
-Note that `params.permit!` is necessary to form a correct `Callback` object.
+Note that `params.permit!` is necessary to form a correct `Response` object.
 
 At this point running `set_webhook` task should return `{ "status":0, "status_message":"ok", ... }`:
 ```bash
@@ -97,7 +97,7 @@ From here we can fork the flow of execution based on event type as shown in `han
   private
 
   def handle_event
-    case @callback.params.event
+    case @response.params.event
     when 'message'
       handle_message
     when 'conversation_started'
@@ -106,7 +106,7 @@ From here we can fork the flow of execution based on event type as shown in `han
   end
 
   def handle_message
-    case @callback.params.message.text
+    case @response.params.message.text
     when '/start'
       choose_action
     when '/help'
@@ -165,13 +165,12 @@ Each buttons' `'ActionType'` has a corresponding method inside `Viberroo::Input`
 
 ## Documentation
 ### Bot
-Is responsible for sending requests to Viber API. Each request sends a Faraday
-POST request to a particular endpoint. There are a _bang_ variant (DEPRECATED) for each method. Each regular method returns a [faraday response](https://www.rubydoc.info/gems/faraday/Faraday/Response). Each _bang_ method returns parsed response body.
+Is responsible for sending requests to Viber API. Each request sends a http POST request to a particular endpoint, each returns http response.
 
-#### `initialize(token: nil, callback: {})`
+#### `initialize(token: nil, response: {})`
 * Parameters
   * `token` `<String>` optional. Normally should be provided by `Viberroo.configure.auth_token` but is available here as a shortcut when predefined configuration is undesirable. Takes precedence over `Viberroo.configure.auth_token`.
-  * `callback` `<Hash>` optional.
+  * `response` `<Hash>` optional.
 
 #### `set_webhook(url:, event_types: nil, send_name: nil, send_photo: nil)`
 * Parameters
@@ -179,18 +178,12 @@ POST request to a particular endpoint. There are a _bang_ variant (DEPRECATED) f
   * `event_types` `<Array>` Indicates the types of events that the bot would receive from API. **API Default**: `%w[delivered seen failed subscribed unsubscribed conversation_started]`.
   * `send_name` `true | false` Indicates whether or not the bot should receive the user name. **API Default** `false`.
   * `send_photo` `true | false` Indicates whether or not the bot should receive the user photo. **API Default**: `false`.
-* Returns: `<Faraday::Response>`
+* Returns: `<HTTPSuccess>`
 * Endpoint: `/set_webhook`
-
-#### `set_webhook!(url:, event_types: nil, send_name: nil, send_photo: nil)`
-DEPRECATED Same as `set_webhook` except returns parsed response body of type `<Hash>`.
 
 #### `remove_webhook`
-* Returns: `<Faraday::Response>`
+* Returns: `<HTTPSuccess>`
 * Endpoint: `/set_webhook`
-
-#### `remove_webhook!`
-DEPRECATED Same as `remove_webhook` except returns parsed response body of type `<Hash>`.
 
 #### `send(message:, keyboard: {})`
 * Parameters
@@ -198,47 +191,32 @@ DEPRECATED Same as `remove_webhook` except returns parsed response body of type 
     * `sender` `<Hash>`
       * `name` `<String>` required. The sender’s name to display, max 28 characters.
   * `keyboard` `<Hash>` Optional keyboard.
-* Returns: `<Faraday::Response>`
+* Returns: `<HTTPSuccess>`
 * Endpoint: `/send_message`
-
-#### `send!(message:, keyboard: {})`
-DEPRECATED Same as `send` except returns parsed response body of type `<Hash>`.
 
 #### `broadcast_message(message:, to:)`
 Maximum total JSON size of the request is 30kb. The maximum list length is 300 receivers. The Broadcast API is used to send messages to multiple recipients with a rate limit of 500 requests in a 10 seconds window.
 * Parameters
   * `message` `<Hash>` A message to broadcast.
   * `to` `<String[]>` List of user ids to broadcast to. Specified users need to be subscribed.
-* Returns: `<Faraday::Response>`
+* Returns: `<HTTPSuccess>`
 * Endpoint: `/broadcast_message`
 
-#### `broadcast_message!(message:, to:)`
-DEPRECATED Same as `broadcast_message` except returns parsed response body of type `<Hash>`.
-
 #### `get_account_info`
-* Returns: `<Faraday::Response>`
+* Returns: `<HTTPSuccess>`
 * Endpoint: `/get_account_info`
-
-#### `get_account_info!`
-DEPRECATED Same as `get_account_info` except returns parsed response body of type `<Hash>`.
 
 #### `get_user_details(id:)`
 * Parameters
   * `id` `<String>` Subscribed user id.
-* Returns: `<Faraday::Response>`
+* Returns: `<HTTPSuccess>`
 * Endpoint: `/get_user_details`
-
-#### `get_user_details!(id:)`
-DEPRECATED Same as `get_user_details` except returns parsed response body of type `<Hash>`.
 
 #### `get_online(ids:)`
 * Parameters
   * `ids` `<String[]>` Subscribed user ids, maximum of 100 of them per request.
-* Returns: `<Faraday::Response>`
+* Returns: `<HTTPSuccess>`
 * Endpoint: `/get_user_details`
-
-#### `get_online(ids:)`
-Same as `get_online` except returns parsed response body of type `<Hash>`.
 
 ### Message
 `Message` module methods are used as a declarative wrappers with predefined types for each message type Viber API offers.
@@ -350,7 +328,7 @@ All the other buttons have the exactly the same signature except of `ActionType`
 #### `none_button(params = {})`
 * `ActionType` `<String>` **Default**: `'none'`.
 
-### Callback
+### Response
 Wraps callback response and provides helper methods for easier parameter access.
 
 #### `initialize(params)`
@@ -375,9 +353,6 @@ After checking out the repository, run `bin/setup` to install dependencies. Then
 To install this gem onto your local machine, run `bundle exec rake install`. To
 release a new version, update the version number in `version.rb`, create a tag
 for a new version, and then merge to master, GitHub actions will take care of running specs and pushing to [rubygems.org](https://rubygems.org).
-
-### TODO
-* make dependencies optional
 
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at https://github.com/vikdotdev/viberroo.
