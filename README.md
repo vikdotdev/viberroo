@@ -5,7 +5,7 @@ This Viber bot is a thin wrapper for Viber REST API, written in Ruby. It uses mo
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'viberroo', '~> 0.2.1'
+gem 'viberroo', '~> 0.2.2'
 ```
 
 And then execute:
@@ -32,7 +32,7 @@ $ rails g task viber set_webhook remove_webhook
   # lib/tasks/viber.rake
   namespace :viber do
     task set_webhook: :environment do
-      Viberroo::Bot.new.set_webhook!(
+      Viberroo::Bot.new.set_webhook(
         url: 'https://<your_ngrok_public_address>/viber',
         event_types: %w[conversation_started subscribed unsubscribed],
         send_name: true,
@@ -41,7 +41,7 @@ $ rails g task viber set_webhook remove_webhook
     end
 
     task remove_webhook: :environment do
-      Viberroo::Bot.new.remove_webhook!
+      Viberroo::Bot.new.remove_webhook
     end
   end
 ```
@@ -165,7 +165,8 @@ Each buttons' `'ActionType'` has a corresponding method inside `Viberroo::Input`
 
 ## Documentation
 ### Bot
-Is responsible for sending requests to Viber API. Each request sends a Faraday POST request to a particular endpoint. There are a _bang_ variant for each method. Each regular method returns a [faraday response](https://www.rubydoc.info/gems/faraday/Faraday/Response). Each _bang_ method returns parsed response body.
+Is responsible for sending requests to Viber API. Each request sends a Faraday
+POST request to a particular endpoint. There are a _bang_ variant (DEPRECATED) for each method. Each regular method returns a [faraday response](https://www.rubydoc.info/gems/faraday/Faraday/Response). Each _bang_ method returns parsed response body.
 
 #### `initialize(token: nil, callback: {})`
 * Parameters
@@ -176,20 +177,20 @@ Is responsible for sending requests to Viber API. Each request sends a Faraday P
 * Parameters
   * `url` `<String>` Account webhook URL to receive callbacks.
   * `event_types` `<Array>` Indicates the types of events that the bot would receive from API. **API Default**: `%w[delivered seen failed subscribed unsubscribed conversation_started]`.
-  * `send_name` `<TrueClass> | <FalseClass>` Indicates whether or not the bot should receive the user name. **API Default** `false`.
-  * `send_photo` `<TrueClass> | <FalseClass>` Indicates whether or not the bot should receive the user photo. **API Default**: `false`.
+  * `send_name` `true | false` Indicates whether or not the bot should receive the user name. **API Default** `false`.
+  * `send_photo` `true | false` Indicates whether or not the bot should receive the user photo. **API Default**: `false`.
 * Returns: `<Faraday::Response>`
 * Endpoint: `/set_webhook`
 
 #### `set_webhook!(url:, event_types: nil, send_name: nil, send_photo: nil)`
-Same as `set_webhook` except returns parsed response body of type `<Hash>`.
+DEPRECATED Same as `set_webhook` except returns parsed response body of type `<Hash>`.
 
 #### `remove_webhook`
 * Returns: `<Faraday::Response>`
 * Endpoint: `/set_webhook`
 
 #### `remove_webhook!`
-Same as `remove_webhook` except returns parsed response body of type `<Hash>`.
+DEPRECATED Same as `remove_webhook` except returns parsed response body of type `<Hash>`.
 
 #### `send(message:, keyboard: {})`
 * Parameters
@@ -201,7 +202,7 @@ Same as `remove_webhook` except returns parsed response body of type `<Hash>`.
 * Endpoint: `/send_message`
 
 #### `send!(message:, keyboard: {})`
-Same as `send` except returns parsed response body of type `<Hash>`.
+DEPRECATED Same as `send` except returns parsed response body of type `<Hash>`.
 
 #### `broadcast_message(message:, to:)`
 Maximum total JSON size of the request is 30kb. The maximum list length is 300 receivers. The Broadcast API is used to send messages to multiple recipients with a rate limit of 500 requests in a 10 seconds window.
@@ -212,14 +213,14 @@ Maximum total JSON size of the request is 30kb. The maximum list length is 300 r
 * Endpoint: `/broadcast_message`
 
 #### `broadcast_message!(message:, to:)`
-Same as `broadcast_message` except returns parsed response body of type `<Hash>`.
+DEPRECATED Same as `broadcast_message` except returns parsed response body of type `<Hash>`.
 
 #### `get_account_info`
 * Returns: `<Faraday::Response>`
 * Endpoint: `/get_account_info`
 
 #### `get_account_info!`
-Same as `get_account_info` except returns parsed response body of type `<Hash>`.
+DEPRECATED Same as `get_account_info` except returns parsed response body of type `<Hash>`.
 
 #### `get_user_details(id:)`
 * Parameters
@@ -228,7 +229,7 @@ Same as `get_account_info` except returns parsed response body of type `<Hash>`.
 * Endpoint: `/get_user_details`
 
 #### `get_user_details!(id:)`
-Same as `get_user_details` except returns parsed response body of type `<Hash>`.
+DEPRECATED Same as `get_user_details` except returns parsed response body of type `<Hash>`.
 
 #### `get_online(ids:)`
 * Parameters
@@ -362,6 +363,11 @@ Wraps callback response and provides helper methods for easier parameter access.
 #### `user_id`
  Location of user id in response object depends on callback event type. This method puts it in one place, independent of callback event type. Original user id params remain available in `params`.
 * Returns `<String>` user id.
+
+### Viberroo.config
+* `auth_token` `<String>` bot authentication token.
+* `logger` `<Logger>` **Default**: `Logger.new` with custom formatter.
+* `parse_response_body` `true | false` whether `Bot` methods return response or parsed response body. **Default**: `true`.
 
 ## Development
 After checking out the repository, run `bin/setup` to install dependencies. Then, run `rspec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
