@@ -9,7 +9,7 @@ module Viberroo
   end
 
   class Configuration
-    attr_accessor :logger, :auth_token
+    attr_accessor :logger, :auth_token, :parse_response_body
 
     def initialize
       @auth_token = nil
@@ -18,6 +18,8 @@ module Viberroo
       @logger.formatter = proc do |severity, datetime, _, msg|
         "[#{datetime}] #{severity} Viberroo::Bot #{msg}\n"
       end
+
+      @parse_response_body = true
     end
   end
 end

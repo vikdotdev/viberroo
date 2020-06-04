@@ -73,13 +73,14 @@ module Viberroo
 
     def request(url, params = {})
       response = Faraday.post(url, compact(params).to_json, @headers)
-      message = "##{caller_name} -- #{response.body}"
-      Viberroo.config.logger&.info(message)
 
-      response
+      Viberroo.config.logger&.info("##{caller_name} -- #{response.body}")
+
+      Viberroo.config.parse_response_body ? JSON.parse(response.body) : response
     end
 
     def parse(request)
+      warn 'DEPRECATION WARNING: Viberroo::Bot bang methods will be dropped on next minor release. Use Viberroo.config.parse_response_body.'
       JSON.parse(request.body)
     end
 
