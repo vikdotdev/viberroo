@@ -69,14 +69,14 @@ class ViberController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def callback
-    @callback = Viberroo::Callback.new(params.permit!)
-    @bot = Viberroo::Bot.new(callback: @callback)
+    @response = Viberroo::Response.new(params.permit!)
+    @bot = Viberroo::Bot.new(response: @response)
 
     head :ok
   end
 end
 ```
-Note that `params.permit!` is necessary to form a correct `Callback` object.
+Note that `params.permit!` is necessary to form a correct `Response` object.
 
 At this point running `set_webhook` task should return `{ "status":0, "status_message":"ok", ... }`:
 ```bash
@@ -97,7 +97,7 @@ From here we can fork the flow of execution based on event type as shown in `han
   private
 
   def handle_event
-    case @callback.params.event
+    case @response.params.event
     when 'message'
       handle_message
     when 'conversation_started'
@@ -106,7 +106,7 @@ From here we can fork the flow of execution based on event type as shown in `han
   end
 
   def handle_message
-    case @callback.params.message.text
+    case @response.params.message.text
     when '/start'
       choose_action
     when '/help'
@@ -167,10 +167,10 @@ Each buttons' `'ActionType'` has a corresponding method inside `Viberroo::Input`
 ### Bot
 Is responsible for sending requests to Viber API. Each request sends a http POST request to a particular endpoint, each returns http response.
 
-#### `initialize(token: nil, callback: {})`
+#### `initialize(token: nil, response: {})`
 * Parameters
   * `token` `<String>` optional. Normally should be provided by `Viberroo.configure.auth_token` but is available here as a shortcut when predefined configuration is undesirable. Takes precedence over `Viberroo.configure.auth_token`.
-  * `callback` `<Hash>` optional.
+  * `response` `<Hash>` optional.
 
 #### `set_webhook(url:, event_types: nil, send_name: nil, send_photo: nil)`
 * Parameters
@@ -328,7 +328,7 @@ All the other buttons have the exactly the same signature except of `ActionType`
 #### `none_button(params = {})`
 * `ActionType` `<String>` **Default**: `'none'`.
 
-### Callback
+### Response
 Wraps callback response and provides helper methods for easier parameter access.
 
 #### `initialize(params)`

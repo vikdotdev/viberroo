@@ -4,8 +4,8 @@ RSpec.describe Viberroo::Bot do
   let(:token) { '1234567890' }
   let(:headers) { { 'X-Viber-Auth-Token': token } }
   let(:api_response) { { body: { status: 0, status_message: 'ok' }.to_json } }
-  let(:callback_response) { Viberroo::Callback.new(event: 'message', sender: { id: '01234=' }) }
-  let(:bot) { Viberroo::Bot.new(token: token, callback: callback_response) }
+  let(:response) { Viberroo::Response.new(event: 'message', sender: { id: '01234=' }) }
+  let(:bot) { Viberroo::Bot.new(token: token, response: response) }
 
   describe 'setting a webhook' do
     let!(:body) do
@@ -52,7 +52,7 @@ RSpec.describe Viberroo::Bot do
         text: 'hello',
         event: 'message',
         sender: { id: '1234=' },
-        receiver: callback_response.user_id
+        receiver: response.user_id
       }
     end
     let!(:request) do

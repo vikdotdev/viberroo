@@ -2,7 +2,7 @@ require 'json'
 require 'viberroo/configuration'
 require 'viberroo/message'
 require 'viberroo/input'
-require 'viberroo/callback'
+require 'viberroo/response'
 require 'viberroo/bot'
 require 'logger'
 

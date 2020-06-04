@@ -3,9 +3,7 @@ require 'uri'
 
 module Viberroo
   class Bot
-    def initialize(token: nil, response: nil, callback: nil)
-      warn 'DEPRECATION WARNING: callback Viberroo::Bot.new `callback:` parameter will be renamed to `response:` in next minor release.' if callback
-
+    def initialize(token: nil, response: nil)
       Viberroo.configure
 
       @headers = {
@@ -13,7 +11,6 @@ module Viberroo
         'Content-Type': 'application/json'
       }
       @response = response
-      @callback = callback
     end
 
     def set_webhook(url:, event_types: nil, send_name: nil, send_photo: nil)
@@ -27,7 +24,7 @@ module Viberroo
 
     def send(message:, keyboard: {})
       request(URL::MESSAGE,
-              { receiver: @response&.user_id || @callback&.user_id }.merge(message).merge(keyboard))
+              { receiver: @response&.user_id }.merge(message).merge(keyboard))
     end
 
     def broadcast(message:, to:)

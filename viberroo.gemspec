@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
     lib/viberroo/configuration.rb
     lib/viberroo/message.rb
     lib/viberroo/input.rb
-    lib/viberroo/callback.rb
+    lib/viberroo/response.rb
     lib/viberroo/bot.rb
   ]
   s.required_ruby_version = '~> 2.3'
