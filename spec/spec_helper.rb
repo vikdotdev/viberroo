@@ -82,6 +82,7 @@ RSpec.configure do |config|
   config.before(:suite) do
     Viberroo.configure do |config|
       config.logger = nil
+      config.parse_response_body = false
     end
   end
 end
