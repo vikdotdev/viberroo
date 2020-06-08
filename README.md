@@ -354,6 +354,11 @@ To install this gem onto your local machine, run `bundle exec rake install`. To
 release a new version, update the version number in `version.rb`, create a tag
 for a new version, and then merge to master, GitHub actions will take care of running specs and pushing to [rubygems.org](https://rubygems.org).
 
+
+## TODO
+* add more examples
+* add RDoc documentation
+
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at https://github.com/vikdotdev/viberroo.
 
