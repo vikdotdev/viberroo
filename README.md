@@ -5,7 +5,7 @@ This Viber bot is a thin wrapper for Viber REST API, written in Ruby. It uses mo
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'viberroo', '~> 0.3.0'
+gem 'viberroo', '~> 0.3.1'
 ```
 
 And then execute:
@@ -353,6 +353,11 @@ After checking out the repository, run `bin/setup` to install dependencies. Then
 To install this gem onto your local machine, run `bundle exec rake install`. To
 release a new version, update the version number in `version.rb`, create a tag
 for a new version, and then merge to master, GitHub actions will take care of running specs and pushing to [rubygems.org](https://rubygems.org).
+
+
+## TODO
+* add more examples
+* add RDoc documentation
 
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at https://github.com/vikdotdev/viberroo.
