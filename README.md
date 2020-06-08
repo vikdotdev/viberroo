@@ -342,7 +342,10 @@ Wraps callback response and provides helper methods for easier parameter access.
  Location of user id in response object depends on callback event type. This method puts it in one place, independent of callback event type. Original user id params remain available in `params`.
 * Returns `<String>` user id.
 
-### Viberroo.config
+### Configuration
+Stores runtime configuration information. Is set with help of `Viberroo.configure`.
+
+Instance variables:
 * `auth_token` `<String>` bot authentication token.
 * `logger` `<Logger>` **Default**: `Logger.new` with custom formatter.
 * `parse_response_body` `true | false` whether `Bot` methods return response or parsed response body. **Default**: `true`.
