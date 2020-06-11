@@ -194,7 +194,7 @@ Is responsible for sending requests to Viber API. Each request sends a http POST
 * Returns: `<HTTPSuccess>`
 * Endpoint: `/send_message`
 
-#### `broadcast_message(message:, to:)`
+#### `broadcast(message:, to:)`
 Maximum total JSON size of the request is 30kb. The maximum list length is 300 receivers. The Broadcast API is used to send messages to multiple recipients with a rate limit of 500 requests in a 10 seconds window.
 * Parameters
   * `message` `<Hash>` A message to broadcast.
