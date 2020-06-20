@@ -55,7 +55,7 @@ end
 ```
 
 ### Controller
-Generate a controller with something like `rails g controller viber callback` and point a route to it:
+Generate a controller with `rails g controller viber callback` and point a route to it:
 ```ruby
 # config/routes.rb
 
