@@ -6,7 +6,13 @@ require 'viberroo/response'
 require 'viberroo/bot'
 require 'logger'
 
+##
+# Top namespace for all Viberroo code.
+#
 module Viberroo
+  ##
+  # API endpoints.
+  #
   module URL
     API               = 'https://chatapi.viber.com/pa'.freeze
     WEBHOOK           = "#{API}/set_webhook".freeze

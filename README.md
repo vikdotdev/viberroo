@@ -5,7 +5,7 @@ This Viber bot is a thin wrapper for Viber REST API, written in Ruby. It uses mo
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'viberroo', '~> 0.3.1'
+gem 'viberroo', '~> 0.3.2'
 ```
 
 And then execute:
@@ -28,7 +28,7 @@ Rake task is good way of managing webhooks:
 ```bash
 $ rails g task viber set_webhook remove_webhook
 ```
-``` ruby
+```ruby
   # lib/tasks/viber.rake
   namespace :viber do
     task set_webhook: :environment do
@@ -46,7 +46,7 @@ $ rails g task viber set_webhook remove_webhook
   end
 ```
 We won't run our task just yet - during task execution API will make a callback request to our server to make sure it exists, and we'll need to handle that first. Also you'll need to provide your Viber API token:
-``` ruby
+```ruby
 # config/initializers/viberroo.rb
 
 Viberroo.configure do |config|
@@ -84,9 +84,10 @@ $ rake viber:set_webhook
 ```
 
 From here we can fork the flow of execution based on event type as shown in `handle_event` method. For example when event type is 'message', we can fork the flow based on message text as shown in `handle_message` method. More information on callback events can be found in 'Callbacks' section in [API Documentation](https://developers.viber.com/docs/api/rest-bot-api/#callbacks)
-``` ruby
+```ruby
   # app/controllers/viber_controller.rb
-  ...
+  # ...
+
   def callback
     # ...
     handle_event
@@ -121,7 +122,7 @@ From here we can fork the flow of execution based on event type as shown in `han
 ```
 
 To respond back to the user `Viberroo::Bot` class is equipped with `send` method which accepts various [message types](https://developers.viber.com/docs/api/rest-bot-api/#message-types). See _method name/message type_ mapping in [documentation](#documentation).
-``` ruby
+```ruby
   # app/controllers/viber_controller.rb
 
   # ...
@@ -133,7 +134,7 @@ To respond back to the user `Viberroo::Bot` class is equipped with `send` method
 ```
 
 The Viber API allows sending a custom keyboard with predefined replies or actions. Such a keyboard can be attached to any message:
-``` ruby
+```ruby
   # app/controllers/viber_controller.rb
   class ViberController < ApplicationController
     include Viberroo
@@ -159,196 +160,13 @@ The Viber API allows sending a custom keyboard with predefined replies or action
       keyboard = Input.keyboard(Buttons: [something, google])
       @bot.send(message: message, keyboard: keyboard)
     end
+  end
 ```
 
-Each buttons' `'ActionType'` has a corresponding method inside `Viberroo::Input` module. `keyboard` method also comes from there. See Viber API [Button parameters](https://viber.github.io/docs/tools/keyboards/#buttons-parameters) section for parameter explanation and possibilities.
+Each buttons' `ActionType` has a corresponding method inside `Viberroo::Input` module. `keyboard` method also comes from there. See Viber API [Button parameters](https://viber.github.io/docs/tools/keyboards/#buttons-parameters) section for parameter explanation and possibilities.
 
 ## Documentation
-### Bot
-Is responsible for sending requests to Viber API. Each request sends a http POST request to a particular endpoint, each returns http response.
-
-#### `initialize(token: nil, response: {})`
-* Parameters
-  * `token` `<String>` optional. Normally should be provided by `Viberroo.configure.auth_token` but is available here as a shortcut when predefined configuration is undesirable. Takes precedence over `Viberroo.configure.auth_token`.
-  * `response` `<Hash>` optional.
-
-#### `set_webhook(url:, event_types: nil, send_name: nil, send_photo: nil)`
-* Parameters
-  * `url` `<String>` Account webhook URL to receive callbacks.
-  * `event_types` `<Array>` Indicates the types of events that the bot would receive from API. **API Default**: `%w[delivered seen failed subscribed unsubscribed conversation_started]`.
-  * `send_name` `true | false` Indicates whether or not the bot should receive the user name. **API Default** `false`.
-  * `send_photo` `true | false` Indicates whether or not the bot should receive the user photo. **API Default**: `false`.
-* Returns: `<HTTPSuccess>`
-* Endpoint: `/set_webhook`
-
-#### `remove_webhook`
-* Returns: `<HTTPSuccess>`
-* Endpoint: `/set_webhook`
-
-#### `send(message:, keyboard: {})`
-* Parameters
-  * `message` `<Hash>` A message to send.
-    * `sender` `<Hash>`
-      * `name` `<String>` required. The sender’s name to display, max 28 characters.
-  * `keyboard` `<Hash>` Optional keyboard.
-* Returns: `<HTTPSuccess>`
-* Endpoint: `/send_message`
-
-#### `broadcast(message:, to:)`
-Maximum total JSON size of the request is 30kb. The maximum list length is 300 receivers. The Broadcast API is used to send messages to multiple recipients with a rate limit of 500 requests in a 10 seconds window.
-* Parameters
-  * `message` `<Hash>` A message to broadcast.
-  * `to` `<String[]>` List of user ids to broadcast to. Specified users need to be subscribed.
-* Returns: `<HTTPSuccess>`
-* Endpoint: `/broadcast_message`
-
-#### `get_account_info`
-* Returns: `<HTTPSuccess>`
-* Endpoint: `/get_account_info`
-
-#### `get_user_details(id:)`
-* Parameters
-  * `id` `<String>` Subscribed user id.
-* Returns: `<HTTPSuccess>`
-* Endpoint: `/get_user_details`
-
-#### `get_online(ids:)`
-* Parameters
-  * `ids` `<String[]>` Subscribed user ids, maximum of 100 of them per request.
-* Returns: `<HTTPSuccess>`
-* Endpoint: `/get_user_details`
-
-### Message
-`Message` module methods are used as a declarative wrappers with predefined types for each message type Viber API offers.
-
-#### `plain(params)`
-* Parameters
-  * `params` `<Hash>`
-    * `type` `<String>` required. **Default**: `'text'`.
-    * `text` `<String>` required.
-* Returns: `<Hash>`
-
-#### `rich(params)`
-The Rich Media message type allows sending messages with pre-defined layout, including height (rows number), width (columns number), text, images and buttons. Consult [official documentation](https://developers.viber.com/docs/api/rest-bot-api/#rich-media-message--carousel-content-message) for more details.
-* Parameters
-  * `params` `<Hash>`
-    * `type` `<String>` required. **Default**: `'rich_media'`
-    * `rich_media` `<Hash>`
-      * `ButtonsGroupColumns` `<Hash>` Number of columns per carousel content block. Possible values 1 - 6. **API Default**: 6.
-      * `ButtonsGroupRows` `<Hash>` Number of rows per carousel content block. Possible values 1 - 7. **API Default**: 7.
-      * `Buttons` `<Hash>` Array of buttons. Max of 6 * `ButtonsGroupColumns` * `ButtonsGroupRows`.
-    * `alt_text` `<String>` Backward compatibility text, limited to 7000 characters.
-* Returns: `<Hash>`
-
-#### `location(params)`
-* Parameters
-  * `params` `<Hash>`
-    * `type` `<String>` required. **Default**: `'location'`.
-    * `location` `<Hash>` required.
-      * `lat` `<String>` required. Latitude.
-      * `lon` `<String>` required. Longitude.
-* Returns: `<Hash>`
-
-#### `picture(params)`
-* Parameters
-  * `params` `<Hash>`
-    * `type` `<String>` required. **Default**: `'picture'`.
-    * `media` `<String>` required. Allowed extensions: .jpeg, .png .gif. Animated GIFs can be sent as URL messages or file messages.
-    * `text` `<String>` optional. Max 120 characters.
-    * `thumbnail` `<String>` optional. URL of a reduced size image. Recomended 400x400.
-* Returns: `<Hash>`
-
-#### `video(params)`
-* Parameters
-  * `type` `<String>` required. **Default**: `'video'`.
-  * `media` `<String>` required. URL of the video (MP4, H264). Max size is 26MB. Only MP4 and H264 are supported.
-  * `size` `<Integer>` required. Size of the video in bytes.
-  * `duration` `<Integer>` Video duration in seconds; will be displayed to the receiver. Max 180 seconds.
-  * `thumbnail` `<String>` URL of a reduced size image. Max size 100 kb. Recommended: 400x400. Only JPEG format is supported.
-* Returns: `<Hash>`
-
-#### `file(params)`
-* Parameters
-  * `type` `<String>` required. **Default**: `'file'`.
-  * `media` `<String>` required. URL of the file. Max size is 50MB. See [forbidden file](https://developers.viber.com/docs/api/rest-bot-api/#forbiddenFileFormats) formats for unsupported file types.
-  * `size` `<Integer>` required. Size of the video in bytes.
-  * `file_name` `<String>` required. File name should include extension. Max 256 characters (including file extension).
-* Returns: `<Hash>`
-
-#### `contact(params)`
-* Parameters
-  * `type` `<String>` required. **Default**: `'contact'`.
-  * `contact` `<Hash>` required.
-    * `name` `<String>` required. Name of the contact. Max 28 characters.
-    * `phone_number` `<String>` required. Phone number of the contact. Max 18 characters.
-* Returns: `<Hash>`
-
-#### `url(params)`
-* Parameters
-  * `type` `<String>` required. **Default**: `'url'`.
-  * `media` `<String>` required. Max 2000 characters.
-* Returns: `<Hash>`
-
-#### `sticker(params)`
-* Parameters
-  * `type` `<String>` required. **Default**: `'sticker'`.
-  * `sticker_id` `<Integer>` required. [Reference](https://viber.github.io/docs/tools/sticker-ids/).
-* Returns: `<Hash>`
-
-### Input
-`Input` module methods are used as a declarative wrappers with predefined types for UI elements such as buttons and keyboards. Buttons can be combined with a keyboard or used in rich messages. Only basic parameters are specified in this documentation, to see all possibilities please consult official Viber API documentation for [keyboard](https://viber.github.io/docs/tools/keyboards/#general-keyboard-parameters), and for [buttons](https://viber.github.io/docs/tools/keyboards/#buttons-parameters).
-
-#### `keyboard(params)`
-Only `'reply'` and `'open-url'` button types are available in keyboard.
-* Parameters
-  * `keyboard` `<Hash>`
-    * `Type` `<String>` required. **Default**: `'keyboard'`.
-    * `Buttons` `<Hash>` required. Array containing all keyboard buttons by order.
-* Returns: `<Hash>`
-
-#### `reply_button(params)`
-* Parameters
-  * `ActionType` `<String>` **Default**: `'reply'`.
-  * `Text` `<String>` Button text.
-  * `Columns` `<Integer>` Button width in columns. Possible values 1-6. **API Default**: 6.
-  * `Rows` `<Integer>` Button width in rows. Possible values 1-2. **API Default**: 1.
-* Returns: `<Hash>`
-
-All the other buttons have the exactly the same signature except of `ActionType` parameter.
-
-#### `url_button(params)`
-* `ActionType` `<String>` **Default**: `'open-url'`.
-
-#### `location_picker_button(params)`
-* `ActionType` `<String>` **Default**: `'location-picker'`.
-
-#### `share_phone_button(params)`
-* `ActionType` `<String>` **Default**: `'share-phone'`.
-
-#### `none_button(params = {})`
-* `ActionType` `<String>` **Default**: `'none'`.
-
-### Response
-Wraps callback response and provides helper methods for easier parameter access.
-
-#### `initialize(params)`
-* Parameters
-  * `params` `<Hash>` parameters from API callback.
-
-#### `params`
-* Returns `<RecursiveOpenStruct>` callback parameters.
-
-#### `user_id`
- Location of user id in response object depends on callback event type. This method puts it in one place, independent of callback event type. Original user id params remain available in `params`.
-* Returns `<String>` user id.
-
-### Configuration
-Stores runtime configuration information. Is set with help of `Viberroo.configure`.
-
-Instance variables:
-* `auth_token` `<String>` bot authentication token.
-* `logger` `<Logger>` **Default**: `Logger.new` with custom formatter.
-* `parse_response_body` `true | false` whether `Bot` methods return response or parsed response body. **Default**: `true`.
+Documentation can be found on [rubygems](https://www.rubydoc.info/gems/viberroo/0.3.2/Viberroo), or generated locally by cloning the repository and running `yard` in the root of the project.
 
 ## Development
 After checking out the repository, run `bin/setup` to install dependencies. Then, run `rspec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -359,8 +177,20 @@ for a new version, and then merge to master, GitHub actions will take care of ru
 
 
 ## TODO
-* add more examples
-* add RDoc documentation
+* change method signatures:
+  * set_webhook -> make false as default value for send_name and send_photo
+  * send -> keyboard to nil
+  * remove safe navigation to extend ruby version compatibility
+  * location_button -> change to simple lon:, lat: params
+  * picture_message -> change to url:, text: nil, thumbnail: nil
+  * video_message -> change to url:, size:, duration: nil, thumbnail: nil
+  * file_message -> change url:, size:, name:
+  * contact message -> change name:, phone:
+  * url_message -> change to single unnamed parameter
+  * sticker_message -> change to id:
+  * rich_media_message -> change to columns:, rows:, buttons:, alt: nil
+  * rename config to configuration
+
 
 ## Contributing
 Bug reports and pull requests are welcome on GitHub at https://github.com/vikdotdev/viberroo.
