@@ -1,0 +1,3 @@
+lib/**/*.rb
+--markup-provider=redcarpet
+--markup=markdown
