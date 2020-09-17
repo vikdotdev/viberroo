@@ -21,8 +21,8 @@ module Viberroo
     #       end
     #     end
     #
-    # @param [Response] response **Required**. A callback response.
-    # @param [String] token  **Optional**. Normally should be provided by `Viberroo.configure.auth_token` but is available here as a shortcut when predefined configuration is undesirable. Takes precedence over `Viberroo.configure.auth_token`.
+    # @param [Response] response A callback response.
+    # @param [String] token  Normally should be provided by `Viberroo.configure.auth_token` but is available here as a shortcut when predefined configuration is undesirable. Takes precedence over `Viberroo.configure.auth_token`.
     #
     # @see Response
     # @see Configuration
@@ -54,16 +54,16 @@ module Viberroo
     #       end
     #     end
     #
-    # @param [String] url  **Required**. HTTPs callback URL.
-    # @param [Array] event_types **Optional**. Indicates the types of Viber events that the bot will receive. Leaving this parameter out will include all events. **API default**: `%w[delivered seen failed subscribed unsubscribed conversation_started]`.
-    # @param [true, false] send_name **Optional**. Indicates whether or not the bot should receive the user name. **API default**: `false`.
-    # @param [true, false] send_photo **Optional**. Indicates whether or not the bot should receive the user photo. **API default**: `false`.
+    # @param [String] url HTTPs callback URL.
+    # @param [Array] event_types Indicates the types of Viber events that the bot will receive. Leaving this parameter out will include all events `%w[delivered seen failed subscribed unsubscribed conversation_started]`.
+    # @param [true, false] send_name Indicates whether or not the bot should receive the user name.
+    # @param [true, false] send_photo Indicates whether or not the bot should receive the user photo.
     #
     # @return [Net::HTTPResponse || Hash]
     #
     # @see https://developers.viber.com/docs/api/rest-bot-api/#webhooks
     #
-    def set_webhook(url:, event_types: nil, send_name: nil, send_photo: nil)
+    def set_webhook(url:, event_types: nil, send_name: false, send_photo: false)
       request(URL::WEBHOOK, url: url, event_types: event_types,
               send_name: send_name, send_photo: send_photo)
     end
@@ -123,14 +123,13 @@ module Viberroo
     #       Text: 'Browse something wierd'
     #     }
     #
-    #     rich_message = Viberroo::Message.rich(rich_media: { ButtonsGroupColumns: 4,
-    #                                                         ButtonsGroupRows: 6,
-    #                                                         Buttons: [search, locate, browse] })
+    #     rich_message = Viberroo::Message.rich(columns: 4, rows: 6,
+    #                                           buttons: [search, locate, browse])
     #
     #     @bot.send(message: rich_message)
     #
-    # @param [Hash] message **Required**. One of the message types to send.
-    # @param [Hash] keyboard **Optional**. A keyboard that can be attached to a message.
+    # @param [Hash] message One of the message types to send.
+    # @param [Hash] keyboard A keyboard that can be attached to a message.
     #
     # @return [Net::HTTPResponse || Hash]
     #
@@ -140,9 +139,13 @@ module Viberroo
     # @see https://viber.github.io/docs/tools/keyboards/#buttons-parameters
     # @see https://developers.viber.com/docs/api/rest-bot-api/#keyboards
     #
-    def send(message:, keyboard: {})
-      request(URL::MESSAGE,
-              { receiver: @response&.user_id }.merge(message).merge(keyboard))
+    def send(message:, keyboard: nil)
+      request(
+        URL::MESSAGE,
+        { receiver: @response && @response.user_id }
+          .merge(message)
+          .merge(keyboard || {})
+      )
     end
 
     ##
@@ -154,8 +157,8 @@ module Viberroo
     #     message = Viberroo::Message.plain(text: 'Howdy.')
     #     response = @bot.broadcast(message: message, to: ViberSubscriber.sample(500).pluck(:viber_id))
     #
-    # @param [Hash] message **Required**. One of the message types to broadcast.
-    # @param [Array] to **Required**. List of user ids to broadcast to. Specified users need to be subscribed.
+    # @param [Hash] message One of the message types to broadcast.
+    # @param [Array] to List of user ids to broadcast to. Specified users need to be subscribed.
     #
     # @return [Net::HTTPResponse || Hash]
     #
@@ -204,7 +207,7 @@ module Viberroo
     # @example
     #     response = @bot.get_online(ids: ViberSubscriber.sample(100).pluck(:viber_id))
     #
-    # @param [Array] message **Required**. List of user ids.
+    # @param ids [Array] List of user ids.
     #
     # @return [Net::HTTPResponse || Hash]
     #
@@ -233,7 +236,7 @@ module Viberroo
     end
 
     # @!visibility private
-    # Extends Ruby version compability from 2.4 to 2.3.
+    # Extends Ruby version compability.
     def compact(params)
       params.delete_if { |_, v| v.nil? }
     end

@@ -23,6 +23,8 @@ module Viberroo
     #
     #     keyboard = Input.keyboard(Buttons: [go_somewhere])
     #
+    # @return [Hash]
+    #
     # @see https://developers.viber.com/docs/tools/keyboards/#general-keyboard-parameters
     #
     def self.keyboard(params)
@@ -39,6 +41,8 @@ module Viberroo
     #       ActionBody: '/search_cookies',
     #       Text: 'I want some cookies.'
     #     }
+    #
+    # @return [Hash]
     #
     # @see https://developers.viber.com/docs/tools/keyboards/#buttons-parameters
     #
@@ -57,6 +61,8 @@ module Viberroo
     #       Text: 'Browse something weird'
     #     }
     #
+    # @return [Hash]
+    #
     # @see https://developers.viber.com/docs/tools/keyboards/#buttons-parameters
     #
     def self.url_button(params)
@@ -69,12 +75,18 @@ module Viberroo
     # Location picker button, gives ability to pick a location on the map.
     #
     # @example
-    #     button = Viberroo::Input.location_picker_button(location: { lat: 48.9215, lon: 24.7097 })
+    #     button = Viberroo::Input.location_picker_button(lat: 48.9215, lon: 24.7097)
+    #
+    # @param lat [Float] Latitude.
+    # @param lon [Float] Longitude.
+    #
+    # @return [Hash]
     #
     # @see https://developers.viber.com/docs/tools/keyboards/#buttons-parameters
     #
-    def self.location_picker_button(params)
+    def self.location_picker_button(lat:, lon:)
       { ActionType: 'location-picker',
+        location: { lat: lat, lon: lon },
         min_api_version: 3
       }.merge(params)
     end
@@ -85,14 +97,20 @@ module Viberroo
     # Share phone button.
     #
     # @example
-    #   button = Viberroo::Input.share_phone_button(contact: { name: 'Gwythyr', phone_number: '12343214' })
+    #   button = Viberroo::Input.share_phone_button(name: 'Gwythyr', phone: '12343214')
+    #
+    # @param name [String] Name of the contact. Max 28 characters.
+    # @param phone [String] Phone number of the contact. Max 18 characters.
+    #
+    # @return [Hash]
     #
     # @see https://developers.viber.com/docs/tools/keyboards/#buttons-parameters
     #
-    def self.share_phone_button(params)
+    def self.share_phone_button(name:, phone:)
       { ActionType: 'share-phone',
         min_api_version: 3
-      }.merge(params)
+        contact: { name: name, phone: phone }
+      }
     end
 
     ##

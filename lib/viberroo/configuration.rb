@@ -1,7 +1,7 @@
 module Viberroo
   class << self
     # Accessor for global configuration.
-    attr_accessor :config
+    attr_accessor :configuration
   end
 
   ##
@@ -18,8 +18,8 @@ module Viberroo
   # @see Viberroo::Configuration
   #
   def self.configure
-    self.config ||= Configuration.new
-    yield(config) if block_given?
+    self.configuration ||= Configuration.new
+    yield(configuration) if block_given?
   end
 
   ##

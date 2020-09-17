@@ -178,18 +178,15 @@ for a new version, and then merge to master, GitHub actions will take care of ru
 
 ## TODO
 * change method signatures:
-  * set_webhook -> make false as default value for send_name and send_photo
-  * send -> keyboard to nil
-  * remove safe navigation to extend ruby version compatibility
-  * location_button -> change to simple lon:, lat: params
-  * picture_message -> change to url:, text: nil, thumbnail: nil
-  * video_message -> change to url:, size:, duration: nil, thumbnail: nil
-  * file_message -> change url:, size:, name:
-  * contact message -> change name:, phone:
-  * url_message -> change to single unnamed parameter
-  * sticker_message -> change to id:
-  * rich_media_message -> change to columns:, rows:, buttons:, alt: nil
-  * rename config to configuration
+  * location_button -> change to simple lon:, lat: params DONE
+  * picture_message -> change to url:, text: nil, thumbnail: nil DONE
+  * video_message -> change to url:, size:, duration: nil, thumbnail: nil DONE
+  * file_message -> change url:, size:, name: DONE
+  * contact message -> change name:, phone: DONE
+  * url_message -> change to single unnamed parameter DONE
+  * plain_message -> change to single unnamed parameter DONE
+  * sticker_message -> change to id: DONE
+  * rich_media_message -> change to columns:, rows:, buttons:, alt: nil DONE
 
 
 ## Contributing
