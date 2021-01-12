@@ -20,7 +20,7 @@ RSpec.describe Viberroo::Bot do
     before { subject }
 
     context 'with #set_webhook' do
-      subject { bot.set_webhook(body) }
+      subject { bot.set_webhook(**body) }
 
       it 'makes a request with correct url, body and headers' do
         expect(request).to have_been_made.once
@@ -121,7 +121,7 @@ RSpec.describe Viberroo::Bot do
     before { subject }
 
     context 'with #get_user_details' do
-      subject { bot.get_user_details(params) }
+      subject { bot.get_user_details(**params) }
 
       it 'makes a request with correct url, body and headers' do
         expect(request).to have_been_made.once
@@ -140,7 +140,7 @@ RSpec.describe Viberroo::Bot do
     before { subject }
 
     context 'with #get_online' do
-      subject { bot.get_online(params) }
+      subject { bot.get_online(**params) }
 
       it 'makes a request with correct url, body and headers' do
         expect(request).to have_been_made.once

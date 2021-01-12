@@ -7,7 +7,6 @@
 /spec/reports/
 /tmp/
 .rspec_status
-Gemfile.lock
 viberroo-*
 .byebug_history
 .DS_Store

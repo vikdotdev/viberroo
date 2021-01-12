@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
     lib/viberroo/response.rb
     lib/viberroo/bot.rb
   ]
-  s.required_ruby_version = '~> 2.3'
+  s.required_ruby_version = '>= 2.3'
   s.require_paths = ['lib']
   s.add_dependency 'recursive-open-struct', '~> 1.1.1'
 end
