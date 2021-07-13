@@ -166,7 +166,7 @@ The Viber API allows sending a custom keyboard with predefined replies or action
 Each buttons' `ActionType` has a corresponding method inside `Viberroo::Input` module. `keyboard` method also comes from there. See Viber API [Button parameters](https://viber.github.io/docs/tools/keyboards/#buttons-parameters) section for parameter explanation and possibilities.
 
 ## Documentation
-Documentation can be found on [rubygems](https://www.rubydoc.info/gems/viberroo/0.3.2/Viberroo), or generated locally by cloning the repository and running `yard` in the root of the project.
+Documentation can be found on [rubygems](https://www.rubydoc.info/gems/viberroo/0.3.3/Viberroo), or generated locally by cloning the repository and running `yard` in the root of the project.
 
 ## Development
 After checking out the repository, run `bin/setup` to install dependencies. Then, run `rspec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
