@@ -39,15 +39,15 @@ module Viberroo
     # @return [String]
     #
     # @see Bot#set_webhook
-     attr_accessor :auth_token
-   
+    attr_accessor :auth_token
+
     ##
     # Specifies whether to parse response body of Bot requests.
     #
     # @return [true || false]
     #
     # @see Bot
-     attr_accessor :parse_response_body
+    attr_accessor :parse_response_body
 
     def initialize
       @auth_token = nil

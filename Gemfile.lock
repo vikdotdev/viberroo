@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    viberroo (0.3.2)
+    viberroo (0.3.4)
       recursive-open-struct (~> 1.1.1)
 
 GEM

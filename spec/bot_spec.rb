@@ -8,6 +8,7 @@ RSpec.describe Viberroo::Bot do
   let(:bot) { Viberroo::Bot.new(token: token, response: response) }
 
   describe 'setting a webhook' do
+    let(:bot) { Viberroo::Bot.new(token: token) }
     let!(:body) do
       { url: 'http://my.host.com', event_types: %w[conversation_started] }
     end
@@ -29,6 +30,7 @@ RSpec.describe Viberroo::Bot do
   end
 
   describe 'removing a webhook' do
+    let(:bot) { Viberroo::Bot.new(token: token) }
     let!(:request) do
       stub_request(:post, Viberroo::URL::WEBHOOK)
         .with(headers: headers)
@@ -63,8 +65,8 @@ RSpec.describe Viberroo::Bot do
 
     before { subject }
 
-    context 'with #send' do
-      subject { bot.send(message: message) }
+    context 'with #send_message' do
+      subject { bot.send_message(message) }
 
       it 'makes a request with correct url, body and headers' do
         expect(request).to have_been_made.once
