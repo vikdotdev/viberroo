@@ -28,7 +28,7 @@ module Viberroo
     # @see Configuration
     # @see https://developers.viber.com/docs/api/rest-bot-api/#authentication-token
     #
-    def initialize(response:, token: nil)
+    def initialize(response: Response.new({}), token: nil)
       Viberroo.configure
 
       @headers = {
@@ -65,7 +65,7 @@ module Viberroo
     #
     def set_webhook(url:, event_types: nil, send_name: nil, send_photo: nil)
       request(URL::WEBHOOK, url: url, event_types: event_types,
-              send_name: send_name, send_photo: send_photo)
+                            send_name: send_name, send_photo: send_photo)
     end
 
     ##
@@ -140,9 +140,18 @@ module Viberroo
     # @see https://viber.github.io/docs/tools/keyboards/#buttons-parameters
     # @see https://developers.viber.com/docs/api/rest-bot-api/#keyboards
     #
+    def send_message(message, keyboard: {})
+      request(URL::MESSAGE, { receiver: @response.user_id }.merge(message, keyboard))
+    end
+
+    # @deprecated Use {#send_message} instead.
     def send(message:, keyboard: {})
-      request(URL::MESSAGE,
-              { receiver: @response&.user_id }.merge(message).merge(keyboard))
+      Viberroo.config.logger.info(<<~WARNING)
+        DEPRECATION WARNING: Bot#send method is going to be removed in the next
+        minor release. Use Bot#send_message instead.
+      WARNING
+
+      send_message(message, keyboard: keyboard)
     end
 
     ##
@@ -204,7 +213,7 @@ module Viberroo
     # @example
     #     response = @bot.get_online(ids: ViberSubscriber.sample(100).pluck(:viber_id))
     #
-    # @param [Array] message **Required**. List of user ids.
+    # @param [Array] ids **Required**. List of user ids.
     #
     # @return [Net::HTTPResponse || Hash]
     #
@@ -226,8 +235,6 @@ module Viberroo
 
         http.request(request)
       end
-
-      Viberroo.config.logger&.info("##{caller_name} -- #{response.body}")
 
       Viberroo.config.parse_response_body ? JSON.parse(response.body) : response
     end
