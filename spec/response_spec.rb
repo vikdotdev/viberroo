@@ -112,4 +112,15 @@ RSpec.describe Viberroo::Response do
       it { is_expected.to eq(params[:sender][:id]) }
     end
   end
+
+  describe 'method_missing' do
+    let(:params) { { foo: { bar: :baz } } }
+
+    subject { Viberroo::Response.new(params) }
+
+    it 'self delegated methods to params' do
+      expect(subject.foo.to_h).to eq(bar: :baz)
+      expect(subject.foo.bar).to eq(:baz)
+    end
+  end
 end
