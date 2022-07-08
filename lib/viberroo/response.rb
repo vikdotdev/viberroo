@@ -16,7 +16,15 @@ module Viberroo
     #       skip_before_action :verify_authenticity_token
     #
     #       def callback
+    #         # For example, params contain the following:
+    #         # { foo: { bar: { baz: :boo }}}
     #         @response = Viberroo::Response.new(params.permit!)
+    #         # Those can be accessed through params:
+    #         puts @response.params.foo
+    #         # Or directly:
+    #         puts @response.foo
+    #         puts @response.foo.bar
+    #         puts @response.foo.bar.baz
     #         @bot = Viberroo::Bot.new(response: @response)
     #
     #         head :ok
@@ -46,6 +54,10 @@ module Viberroo
       else
         @params.dig(:user, :id)
       end
+    end
+
+    def method_missing(method)
+      params.public_send(method)
     end
   end
 end

@@ -28,6 +28,19 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 ### Deprecated
 - None
 
+## v0.3.5
+
+### Added
+- `Response` instance now delegates to params via `method_missing`.
+```
+params = { foo: { bar: :baz }}
+response = Viberroo::Response.new(params)
+# Previously, those could only be accessed through params:
+puts response.params.foo.bar
+# Now those can be accessed directly:
+puts response.foo.bar
+```
+
 ## v0.3.4
 Start a changelog.
 
