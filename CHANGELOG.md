@@ -28,6 +28,11 @@ recommendations of [keepachangelog.com](http://keepachangelog.com/).
 ### Deprecated
 - None
 
+## v0.3.6
+
+### Fixed
+- `Response` instance now includes required `min_api_version` in the root of request params taken from inputs.
+
 ## v0.3.5
 
 ### Added
