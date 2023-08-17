@@ -151,7 +151,7 @@ module Viberroo
         minor release. Use Bot#send_message instead.
       WARNING
 
-      send_message(message, keyboard: keyboard)
+      send_message(message: message, keyboard: keyboard)
     end
 
     ##
