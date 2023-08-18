@@ -135,7 +135,7 @@ RSpec.describe Viberroo::Bot do
     before { subject }
 
     context 'with #send_message' do
-      subject { bot.send_message(message: message) }
+      subject { bot.send_message(message) }
 
       it 'makes a request with correct url, body and headers' do
         expect(request).to have_been_made.once
