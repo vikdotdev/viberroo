@@ -140,10 +140,12 @@ module Viberroo
     # @see https://viber.github.io/docs/tools/keyboards/#buttons-parameters
     # @see https://developers.viber.com/docs/api/rest-bot-api/#keyboards
     #
-    def send_message(message:, keyboard: {})
+    def send_message(message, keyboard: {})
       request(
         URL::MESSAGE,
-        { receiver: @response.user_id }.merge(message, keyboard, min_api_version_hash(keyboard))
+        { receiver: @response.user_id }.merge(message, keyboard).tap do |hash|
+          hash.merge!(min_api_version_hash(keyboard)) unless hash[:min_api_version]
+        end
       )
     end
 

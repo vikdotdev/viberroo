@@ -8,7 +8,7 @@ RSpec.describe Viberroo::Bot do
   let(:bot) { Viberroo::Bot.new(token: token, response: response) }
 
   describe '#send_message' do
-    subject { bot.send_message(message: message, keyboard: keyboard) }
+    subject { bot.send_message(message, keyboard: keyboard) }
 
     let(:message) do
       {
@@ -35,6 +35,21 @@ RSpec.describe Viberroo::Bot do
       let(:button)          { Viberroo::Input.share_phone_button({}) }
       let(:keyboard)        { Viberroo::Input.keyboard(Buttons: [button]) }
       let(:min_api_version) { button[:min_api_version] }
+
+      it 'sets correct :min_api_version attr in the params root' do
+        expect(bot).to receive(:request).with(
+          Viberroo::URL::MESSAGE,
+          { receiver: response.user_id }.merge(message, keyboard, min_api_version: min_api_version)
+        )
+        subject
+      end
+    end
+
+    context 'when keyboard contain single input with api version but min_api-version was set before' do
+      let(:min_api_version) { 7 }
+      let(:message)         { { min_api_version: min_api_version } }
+      let(:button)          { Viberroo::Input.share_phone_button({}) }
+      let(:keyboard)        { Viberroo::Input.keyboard(Buttons: [button]) }
 
       it 'sets correct :min_api_version attr in the params root' do
         expect(bot).to receive(:request).with(
