@@ -141,7 +141,12 @@ module Viberroo
     # @see https://developers.viber.com/docs/api/rest-bot-api/#keyboards
     #
     def send_message(message, keyboard: {})
-      request(URL::MESSAGE, { receiver: @response.user_id }.merge(message, keyboard))
+      request(
+        URL::MESSAGE,
+        { receiver: @response.user_id }.merge(message, keyboard).tap do |hash|
+          hash.merge!(min_api_version_hash(keyboard)) unless hash[:min_api_version]
+        end
+      )
     end
 
     # @deprecated Use {#send_message} instead.
@@ -248,6 +253,25 @@ module Viberroo
     # @!visibility private
     def caller_name
       caller[1][/`.*'/][1..-2]
+    end
+
+    ##
+    # @!visibility private
+    #
+    # @note Iterates each keyboard input to identify the maximum required :min_api_version param.
+    #
+    # @return [Hash || Empty Hash]
+    #
+    def min_api_version_hash(keyboard)
+      buttons_array = keyboard.dig(:keyboard, :Buttons)
+
+      return {} unless buttons_array
+
+      min_api_version = buttons_array.map { |btn| btn[:min_api_version] }.compact.max
+
+      return {} unless min_api_version
+
+      { min_api_version: min_api_version }
     end
   end
 end

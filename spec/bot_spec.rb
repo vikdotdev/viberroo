@@ -7,6 +7,90 @@ RSpec.describe Viberroo::Bot do
   let(:response) { Viberroo::Response.new(event: 'message', sender: { id: '01234=' }) }
   let(:bot) { Viberroo::Bot.new(token: token, response: response) }
 
+  describe '#send_message' do
+    subject { bot.send_message(message, keyboard: keyboard) }
+
+    let(:message) do
+      {
+        text: 'hello',
+        event: 'message',
+        sender: { id: '1234=' },
+        receiver: response.user_id
+      }
+    end
+
+    context 'when keyboard does not contain inputs' do
+      let(:keyboard) { {} }
+
+      it 'does not contain :min_api_version attr in the params root' do
+        expect(bot).to receive(:request).with(
+          Viberroo::URL::MESSAGE,
+          { receiver: response.user_id }.merge(message)
+        )
+        subject
+      end
+    end
+
+    context 'when keyboard contain single input with api version' do
+      let(:button)          { Viberroo::Input.share_phone_button({}) }
+      let(:keyboard)        { Viberroo::Input.keyboard(Buttons: [button]) }
+      let(:min_api_version) { button[:min_api_version] }
+
+      it 'sets correct :min_api_version attr in the params root' do
+        expect(bot).to receive(:request).with(
+          Viberroo::URL::MESSAGE,
+          { receiver: response.user_id }.merge(message, keyboard, min_api_version: min_api_version)
+        )
+        subject
+      end
+    end
+
+    context 'when keyboard contain single input with api version but min_api-version was set before' do
+      let(:min_api_version) { 7 }
+      let(:message)         { { min_api_version: min_api_version } }
+      let(:button)          { Viberroo::Input.share_phone_button({}) }
+      let(:keyboard)        { Viberroo::Input.keyboard(Buttons: [button]) }
+
+      it 'sets correct :min_api_version attr in the params root' do
+        expect(bot).to receive(:request).with(
+          Viberroo::URL::MESSAGE,
+          { receiver: response.user_id }.merge(message, keyboard, min_api_version: min_api_version)
+        )
+        subject
+      end
+    end
+
+    context 'when keyboard contain multiple inputs one of which has no api versions' do
+      let(:button_one)      { Viberroo::Input.share_phone_button({}) }
+      let(:button_two)      { Viberroo::Input.reply_button({}) }
+      let(:keyboard)        { Viberroo::Input.keyboard(Buttons: [button_one, button_two]) }
+      let(:min_api_version) { button_one[:min_api_version] }
+
+      it 'sets correct :min_api_version attr in the params root' do
+        expect(bot).to receive(:request).with(
+          Viberroo::URL::MESSAGE,
+          { receiver: response.user_id }.merge(message, keyboard, min_api_version: min_api_version)
+        )
+        subject
+      end
+    end
+
+    context 'when keyboard contain multiple inputs with different api versions' do
+      let(:button_one)      { Viberroo::Input.share_phone_button({ min_api_version: 3 }) }
+      let(:button_two)      { Viberroo::Input.reply_button({ min_api_version: 7 }) }
+      let(:keyboard)        { Viberroo::Input.keyboard(Buttons: [button_one, button_two]) }
+      let(:min_api_version) { button_two[:min_api_version] }
+
+      it 'sets correct :min_api_version attr in the params root' do
+        expect(bot).to receive(:request).with(
+          Viberroo::URL::MESSAGE,
+          { receiver: response.user_id }.merge(message, keyboard, min_api_version: min_api_version)
+        )
+        subject
+      end
+    end
+  end
+
   describe 'setting a webhook' do
     let(:bot) { Viberroo::Bot.new(token: token) }
     let!(:body) do
